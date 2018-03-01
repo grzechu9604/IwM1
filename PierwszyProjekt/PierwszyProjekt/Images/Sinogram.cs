@@ -11,6 +11,9 @@ namespace PierwszyProjekt.Images
     {
         public Bitmap Bitmap { private set; get; }
 
+        public long IterationAmount { set; get; }
+        private double Alfa { set; get; }
+
         public Sinogram(BaseImage image)
         {
             DoRandonTransform(image);
