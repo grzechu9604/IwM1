@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace PierwszyProjekt.Algorithms
 {
-    public class QuarterCircleCreator
+    public class CircleCreator
     {
         private long maxX;
         private long maxY;
-        public List<Point> PointsOnArc { private set; get; }
+        public List<Point> PointsOnCircle { private set; get; }
 
-        public QuarterCircleCreator(long maxX, long maxY)
+        public CircleCreator(long maxX, long maxY)
         {
             this.maxX = maxX;
             this.maxY = maxY;
-            this.PointsOnArc = CreateQuarterOfCircle();
+            this.PointsOnCircle = CreateCircle();
         }
 
-        private List<Point> CreateQuarterOfCircle()
+        private List<Point> CreateCircle()
         {
             List<Point> points = new List<Point>();
             
