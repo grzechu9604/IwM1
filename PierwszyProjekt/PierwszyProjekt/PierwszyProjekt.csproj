@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Algorithms\LineCreator.cs" />
     <Compile Include="Algorithms\CircleCreator.cs" />
+    <Compile Include="Algorithms\PairsPointCreator.cs" />
     <Compile Include="Images\IDisplayable.cs" />
     <Compile Include="Images\BaseImage.cs" />
     <Compile Include="Images\Sinogram.cs" />
