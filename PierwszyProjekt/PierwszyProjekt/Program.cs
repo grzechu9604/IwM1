@@ -12,11 +12,12 @@ namespace PierwszyProjekt
     {
         static void Main(string[] args)
         {
-            CircleCreator cc = new CircleCreator(99, 99);
-            int[,] array = new int[100, 100];
-            for (int i = 0; i < 100; i++)
+            int n = 100;
+            CircleCreator cc = new CircleCreator(n-1, n-1);
+            int[,] array = new int[n, n];
+            for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < n; j++)
                 {
                     array[i,j] = 0;
                 }
@@ -26,9 +27,9 @@ namespace PierwszyProjekt
             LineCreator lc = new LineCreator(new Point(6, 6), new Point(54, 99));
             lc.Line.ForEach(p => array[p.X, p.Y] = 5);
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < n; i++)
             {
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < n; j++)
                 {
                     Console.Write(array[i, j]);
                 }
