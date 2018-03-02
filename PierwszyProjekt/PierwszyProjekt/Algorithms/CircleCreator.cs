@@ -42,7 +42,7 @@ namespace PierwszyProjekt.Algorithms
                 points.Add(min.Item1);
             }
 
-            //korzystanie z symetrii przed pętlą są elementy z I ćwiartki 
+            //korzystanie z symetrii przed pętlą są elementy z jednej ćwiartki 
             // pomijamy pierwszy i ostatni element zakładając że leżą idealnie po środku
             List<Point> _points = new List<Point>();
             _points.AddRange(points);
@@ -60,14 +60,11 @@ namespace PierwszyProjekt.Algorithms
             _points.AddRange(points);
             foreach (var point in _points)
             {
-
-                // IV ćwiartka
+                // kolejne ćwiartki
                 Point p = new Point(point.X, maxY - point.Y);
                 points.Add(p);
-                // II ćwiartka
                 p = new Point(maxX - point.X, point.Y);
                 points.Add(p);
-                // III ćwiartka
                 p = new Point(maxX - point.X, maxY - point.Y);
                 points.Add(p);
             }
