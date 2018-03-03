@@ -30,10 +30,33 @@ namespace PierwszyProjekt.Images
         private void DoRandonTransform(BaseImage image)
         {
             Bitmap = image.Bitmap;
+            Color colour;
+
+            /*
+            Kolor każdego piksela jest przedstawiana jako 32-bitową liczbą: 8 bity każda alfa, czerwony, zielony i niebieski (ang.).
+            Każdy z czterech składników jest liczba z przedziału od 0 do 255, gdzie 0 reprezentuje natężenie do 255 reprezentuje
+            pełną intensywność. 
+            */
+            int[,] bitmapArray = new int[Bitmap.Height, Bitmap.Width];
+            for (int i = 0; i < Bitmap.Height; i++)
+            {
+                for (int j = 0; j < Bitmap.Width; j++)
+                {
+                    colour = Bitmap.GetPixel(i, j);
+                    bitmapArray[i, j] = colour.R + colour.G + colour.B;
+                }
+            }
+
+            /*
+                Czym jest rozpiętość kątowa dla Układu równoległego(np. dla 1 detektora)?
+                element_a = 1
+                element_n = 1
+                element_l = ?
+            */
 
 
             /*
-            int n = 100;
+            int n = 10;
             CircleCreator cc = new CircleCreator(n - 1, n - 1);
             int[,] array = new int[n, n];
             for (int i = 0; i < n; i++)
@@ -45,7 +68,7 @@ namespace PierwszyProjekt.Images
             }
 
             cc.PointsOnCircle.ForEach(p => array[p.X, p.Y] = 1);
-            LineCreator lc = new LineCreator(new Point(6, 6), new Point(54, 99));
+            LineCreator lc = new LineCreator(new Point(0, 6), new Point(0, 8));
             lc.Line.ForEach(p => array[p.X, p.Y] = 5);
 
             for (int i = 0; i < n; i++)
@@ -56,7 +79,7 @@ namespace PierwszyProjekt.Images
                 }
                 Console.WriteLine();
             }
-           */
+            */
 
             Console.Write("I will do --> DoRandonTransform\n");
         }
