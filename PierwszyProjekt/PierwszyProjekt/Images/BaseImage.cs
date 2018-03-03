@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace PierwszyProjekt.Images
 {
@@ -22,14 +23,16 @@ namespace PierwszyProjekt.Images
             DoReversedRandonTransform(sinogram);
         }
 
-        public void Display()
+        public void Display(PictureBox pictureBox)
         {
-            throw new NotImplementedException();
+            pictureBox.Image = Bitmap;
+            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
         private void DoReversedRandonTransform(Sinogram sinogram)
         {
-            throw new NotImplementedException();
+            Bitmap = sinogram.Bitmap;
+            Console.Write("I will do --> DoReversedRandonTransform\n");
         }
     }
 }

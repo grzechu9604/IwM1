@@ -1,9 +1,10 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PierwszyProjekt.Images
 {
@@ -19,14 +20,17 @@ namespace PierwszyProjekt.Images
             DoRandonTransform(image);
         }
 
-        public void Display()
+        public void Display(PictureBox pictureBox)
         {
-            throw new NotImplementedException();
+            pictureBox.Image = Bitmap;
+            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
         private void DoRandonTransform(BaseImage image)
         {
-            throw new NotImplementedException();
+            Bitmap = image.Bitmap;
+            Console.Write("I will do --> DoRandonTransform\n");
+            //throw new NotImplementedException();
         }
     }
 }
