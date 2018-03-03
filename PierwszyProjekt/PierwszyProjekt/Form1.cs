@@ -16,6 +16,12 @@ namespace PierwszyProjekt
     public partial class Form1 : Form
     {
         string thePath;
+        string element_a;
+        string element_n;
+        string element_l;
+        public int element_int_a;
+        public int element_int_n;
+        public int element_int_l;
         BaseImage baseImage;
         Sinogram sinogram;
         BaseImage outImage;
@@ -53,14 +59,22 @@ namespace PierwszyProjekt
             return pictureBox == null || pictureBox.Image == null;
         }
 
+        private bool checkIsElementsNull()
+        {
+            return element_a.Equals(null) || element_n.Equals(null) || element_l.Equals(null) || !int.TryParse(element_a, out element_int_a) || !int.TryParse(element_n, out element_int_n) || !int.TryParse(element_l, out element_int_l);
+        }
+
         //button "Start algorithm" {our algorithm}
         private void button2_Click(object sender, EventArgs e)
         {
             try
             {
-                if (checkIsImageNull(this.pictureBox1)){
+                if (checkIsImageNull(this.pictureBox1) || checkIsElementsNull())
+                {
                     throw new Exception();
                 }
+
+                Console.Write("Elements: " + element_int_a + ", " +  element_int_n + ", " + element_int_l + "\n");
 
                 //DoRandonTransform
                 sinogram = new Sinogram(baseImage);
@@ -74,33 +88,33 @@ namespace PierwszyProjekt
             {
                 MessageBox.Show("There was an error opening the bitmap." + "Please check the path." + ex);
             }
+        }
 
+        //textbox "Wartość a" {load text from textbox to variable thePath}
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            //delta
+            TextBox objTextBox = (TextBox)sender;
+            element_a = objTextBox.Text;
+            Console.Write("Element 'a' is loaded...\n");
+        }
 
-            /*
-            int n = 100;
-            CircleCreator cc = new CircleCreator(n - 1, n - 1);
-            int[,] array = new int[n, n];
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    array[i, j] = 0;
-                }
-            }
+        //textbox "Wartość n" {load text from textbox to variable thePath}
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            //liczba rzutów
+            TextBox objTextBox = (TextBox)sender;
+            element_n = objTextBox.Text;
+            Console.Write("Element 'n' is loaded...\n");
+        }
 
-            cc.PointsOnCircle.ForEach(p => array[p.X, p.Y] = 1);
-            LineCreator lc = new LineCreator(new Point(6, 6), new Point(54, 99));
-            lc.Line.ForEach(p => array[p.X, p.Y] = 5);
-
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    Console.Write(array[i, j]);
-                }
-                Console.WriteLine();
-            }
-            */
+        //textbox "Wartość l" {load text from textbox to variable thePath}
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+            //rozwartość/rozpiętość
+            TextBox objTextBox = (TextBox)sender;
+            element_l = objTextBox.Text;
+            Console.Write("Element 'l' is loaded...\n");
         }
     }
 }
