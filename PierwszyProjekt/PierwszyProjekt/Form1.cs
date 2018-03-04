@@ -78,7 +78,7 @@ namespace PierwszyProjekt
 
                 //DoRandonTransform
                 sinogram = new Sinogram(baseImage);
-                sinogram.Display(this.pictureBox2);
+                sinogram.Display(this.FilePicker);
 
                 //DoReversedRandonTransform
                 outImage = new BaseImage(sinogram);
@@ -115,6 +115,16 @@ namespace PierwszyProjekt
             TextBox objTextBox = (TextBox)sender;
             element_l = objTextBox.Text;
             Console.Write("Element 'l' is loaded...\n");
+        }
+
+        //przycisk ułatwia wybór pliku z poziomu eksploratora plików
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var fileDialog = new OpenFileDialog();
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                textBox1.Text = fileDialog.FileName;
+            }
         }
     }
 }

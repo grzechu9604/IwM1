@@ -11,6 +11,7 @@ namespace PierwszyProjekt
 {
     class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
             Application.EnableVisualStyles();
