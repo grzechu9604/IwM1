@@ -45,9 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\DetectorsGenerator.cs" />
+    <Compile Include="Algorithms\EmiterGenerator.cs" />
     <Compile Include="Algorithms\LineCreator.cs" />
     <Compile Include="Algorithms\CircleCreator.cs" />
     <Compile Include="Algorithms\PairsPointCreator.cs" />
+    <Compile Include="DataTypes\Detector.cs" />
+    <Compile Include="DataTypes\Emiter.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
