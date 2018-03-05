@@ -7,6 +7,7 @@ using System.Drawing;
 
 namespace PierwszyProjekt.Algorithms
 {
+    /// to chyba będzie do wywalenia
     public class PairsPointCreator
     {
         public List<Tuple<Point, Point>> Pairs { private set; get; }
