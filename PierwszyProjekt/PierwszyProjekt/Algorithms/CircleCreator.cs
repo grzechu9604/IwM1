@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PierwszyProjekt.Algorithms
 {
@@ -43,7 +40,7 @@ namespace PierwszyProjekt.Algorithms
             }
 
             //korzystanie z symetrii przed pętlą są elementy z jednej ćwiartki 
-            // pomijamy pierwszy i ostatni element zakładając że leżą idealnie po środku
+            // pomijamy pierwszy element zakładając że leżą idealnie po środku
             List<Point> _points = new List<Point>();
             _points.AddRange(points);
             Point previousPoint = new Point(-1,-1);
