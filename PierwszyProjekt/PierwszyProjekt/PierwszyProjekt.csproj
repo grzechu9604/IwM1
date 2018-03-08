@@ -53,6 +53,7 @@
     <Compile Include="DataTypes\Circle.cs" />
     <Compile Include="DataTypes\Detector.cs" />
     <Compile Include="DataTypes\Emiter.cs" />
+    <Compile Include="DataTypes\EmiterDetectorsSystem.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

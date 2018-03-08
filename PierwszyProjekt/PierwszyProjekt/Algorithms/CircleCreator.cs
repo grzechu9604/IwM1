@@ -14,10 +14,10 @@ namespace PierwszyProjekt.Algorithms
         {
             this.maxX = maxX;
             this.maxY = maxY;
-            this.PointsOnCircle = CreateCircle();
+            CreateCircle();
         }
 
-        private List<Point> CreateCircle()
+        public void CreateCircle()
         {
             List<Point> points = new List<Point>();
 
@@ -55,18 +55,43 @@ namespace PierwszyProjekt.Algorithms
 
             _points.Clear();
             _points.AddRange(points);
+            
+            List<Point> secoundQuarter = new List<Point>();
+            List<Point> thirdQuarter = new List<Point>();
+            List<Point> forthQuarter = new List<Point>();
+
             foreach (var point in _points)
             {
                 // kolejne ćwiartki
                 Point p = new Point(point.X, maxY - point.Y);
-                points.Add(p);
+                forthQuarter.Add(p);
                 p = new Point(maxX - point.X, point.Y);
-                points.Add(p);
+                secoundQuarter.Add(p);
                 p = new Point(maxX - point.X, maxY - point.Y);
-                points.Add(p);
+                thirdQuarter.Add(p);
             }
 
-            return points;
+            #region debug
+
+
+            int[,] tab = new int[maxX + 1, maxY + 1];
+            points.ForEach(p => tab[p.X, p.Y] = 1);
+            secoundQuarter.ForEach(p => tab[p.X, p.Y] = 2);
+            thirdQuarter.ForEach(p => tab[p.X, p.Y] = 3);
+            forthQuarter.ForEach(p => tab[p.X, p.Y] = 4);
+
+            for (int i = 0; i < maxX; i++)
+            {
+                for (int j = 0; j < maxY; j++)
+                {
+                    Console.Write(tab[i, j]);
+                }
+                Console.WriteLine();
+            }
+
+            #endregion
+
+            PointsOnCircle = points;
         }
     }
 }

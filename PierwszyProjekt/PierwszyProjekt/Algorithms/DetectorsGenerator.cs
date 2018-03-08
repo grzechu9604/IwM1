@@ -18,39 +18,26 @@ namespace PierwszyProjekt.Algorithms
             Detectors = GenerateDetectors(amountOfDetectors, angularSpread, circle, emiter);
         }
 
-        public DetectorsGenerator(int amountOfDetectors, List<Point> circle, Emiter emiter)
-        {
-            Detectors = GenerateDetectors(amountOfDetectors, circle, emiter);
-        }
-
         public List<Detector> Detectors { private set; get; }
 
         private List<Detector> GenerateDetectors(int amountOfDetectors, int angularSpread, Circle circle, Emiter emiter)
         {
             List<Detector> detectors = new List<Detector>();
 
-            double stepInDegrees = (double)angularSpread / amountOfDetectors;
+            int amountOfPossibleDetectorsPoints = angularSpread * circle.AmountOfPoints / 360;
+            int stepInPoints = (int)((double)angularSpread / amountOfDetectors * circle.AmountOfPoints);
+            int skipPointsAtTheBegginning = (circle.AmountOfPoints - amountOfPossibleDetectorsPoints) / 2;
+            int emiterIndex = circle.GetIndex(emiter.Point);
+            int createdDetectors = 0;
 
-            Point oppositePoint = OppositPoint(emiter.Point, circle.MaxX, circle.MaxY);
-
-            for (double i = 0; i < angularSpread; i += stepInDegrees)
+            int index = emiterIndex + skipPointsAtTheBegginning;
+            while (createdDetectors != amountOfDetectors)
             {
-                double distance = circle.Radius * 2 * Math.Sin(Math.PI * i / 180.0);
-                //TODO na podstawie odległości od oppositPoint wyznaczyć odpowiedni punkt z orkegu
+                detectors.Add(new Detector(circle.GetPointAtNthPositionUsingModulo(index)));
+                createdDetectors++;
+                index += stepInPoints;
             }
-
-            return detectors;
-        }
-
-        private List<Detector> GenerateDetectors(int amountOfDetectors, List<Point> circle, Emiter emiter)
-        {
-            List<Detector> detectors = new List<Detector>();
-
-            int sizeOfCircle = circle.ToArray().Length;
-
-            List<Point> possibleDetectorsPositions = circle.Where((p, i) => sizeOfCircle / 4 > i && i < 3 / 4 * sizeOfCircle).ToList();
-            possibleDetectorsPositions.Where((p, i) => i % amountOfDetectors == 0);
-
+            
             return detectors;
         }
 

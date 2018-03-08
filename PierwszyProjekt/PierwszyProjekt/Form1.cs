@@ -42,7 +42,7 @@ namespace PierwszyProjekt
             }
             catch (Exception ex)
             {
-                MessageBox.Show("There was an error opening the bitmap." + "Please check the path." + ex );
+                MessageBox.Show("There was an error opening the bitmap." + "Please check the path." + ex);
             }
         }
 
@@ -53,7 +53,7 @@ namespace PierwszyProjekt
             thePath = objTextBox.Text;
             Console.Write("Path is loaded...\n");
         }
-           
+
         private bool checkIsImageNull(PictureBox pictureBox)
         {
             return pictureBox == null || pictureBox.Image == null;
@@ -61,7 +61,8 @@ namespace PierwszyProjekt
 
         private bool checkIsElementsNull()
         {
-            return element_a.Equals(null) || element_n.Equals(null) || element_l.Equals(null) || !int.TryParse(element_a, out element_int_a) || !int.TryParse(element_n, out element_int_n) || !int.TryParse(element_l, out element_int_l);
+            return element_a == null || element_n == null || element_l == null
+                || !int.TryParse(element_a, out element_int_a) || !int.TryParse(element_n, out element_int_n) || !int.TryParse(element_l, out element_int_l);
         }
 
         //button "Start algorithm" {our algorithm}
@@ -77,7 +78,7 @@ namespace PierwszyProjekt
                 Console.Write("Elements: " + element_int_a + ", " +  element_int_n + ", " + element_int_l + "\n");
 
                 //DoRandonTransform
-                sinogram = new Sinogram(baseImage);
+                sinogram = new Sinogram(baseImage, element_int_n, element_int_a, element_int_l);
                 sinogram.Display(this.FilePicker);
 
                 //DoReversedRandonTransform

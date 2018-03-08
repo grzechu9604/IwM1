@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PierwszyProjekt.DataTypes;
 
 namespace PierwszyProjekt.Images
 {
@@ -16,9 +17,9 @@ namespace PierwszyProjekt.Images
         public long IterationAmount { set; get; }
         private double Alfa { set; get; }
 
-        public Sinogram(BaseImage image)
+        public Sinogram(BaseImage image, int n, int a, int l)
         {
-            DoRandonTransform(image);
+            DoRandonTransform(image, n, a, l);
         }
 
         public void Display(PictureBox pictureBox)
@@ -27,8 +28,20 @@ namespace PierwszyProjekt.Images
             pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
-        private void DoRandonTransform(BaseImage image)
+        private void DoRandonTransform(BaseImage image, int n, int a, int l)
         {
+            CircleCreator cc = new CircleCreator(image.Bitmap.Width, image.Bitmap.Height);
+            Circle circle = new Circle(image.Bitmap.Width, image.Bitmap.Height, image.Bitmap.Width / 2, cc.PointsOnCircle.ToArray());
+            EmiterGenerator eg = new EmiterGenerator(a, circle);
+            List<EmiterDetectorsSystem> systems = new List<EmiterDetectorsSystem>();
+
+            eg.Emiters.ForEach(e =>
+            {
+                DetectorsGenerator dg = new DetectorsGenerator(n, l, circle, e);
+                systems.Add(new EmiterDetectorsSystem(e, dg.Detectors));
+            });
+            
+
             Bitmap = image.Bitmap;
             Color colour;
 
