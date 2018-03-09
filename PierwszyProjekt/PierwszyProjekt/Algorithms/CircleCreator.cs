@@ -93,6 +93,8 @@ namespace PierwszyProjekt.Algorithms
             });
 
             List<Point> circle = arc;
+            secoudQuarterArc.Reverse();
+            forthQuarterArc.Reverse();
             circle.AddRange(secoudQuarterArc);
             circle.AddRange(thirdQuarterArc);
             circle.AddRange(forthQuarterArc);
