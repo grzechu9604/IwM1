@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace PierwszyProjekt.Algorithms
 {
@@ -19,11 +20,17 @@ namespace PierwszyProjekt.Algorithms
 
         public void CreateCircle()
         {
+            List<Point> keyPoints = GenerateKeyPointsInFirstQuarter();
+            List<Point> firstQuarterArc = GeneratePointsOnArcFromKeyPoints(keyPoints);
+            PointsOnCircle = GenerateWholeCirceFromArcInFirstHalf(firstQuarterArc);
+        }
+
+        public List<Point> GenerateKeyPointsInFirstQuarter()
+        {
             List<Point> points = new List<Point>();
 
             int radius = maxX / 2;
-
-            //rozwiązanie nieoptymalne
+            
             for (int x = 0; x <= radius; x++)
             {
                 Tuple<Point, double> min = new Tuple<Point, double>(new Point(x, 0), Math.Abs(Math.Pow(radius - x, 2) + Math.Pow(radius, 2) - Math.Pow(radius, 2)));
@@ -36,62 +43,61 @@ namespace PierwszyProjekt.Algorithms
                         min = new Tuple<Point, double>(new Point(x, y), currentValue);
                     }
                 }
+
                 points.Add(min.Item1);
             }
 
-            //korzystanie z symetrii przed pętlą są elementy z jednej ćwiartki 
-            // pomijamy pierwszy element zakładając że leżą idealnie po środku
-            List<Point> _points = new List<Point>();
-            _points.AddRange(points);
-            Point previousPoint = new Point(-1,-1);
-            _points.ForEach(p =>
+            return points;
+        }
+
+        public List<Point> GeneratePointsOnArcFromKeyPoints(List<Point> keyPoints)
+        {
+            List<Point> linearizedPoints = new List<Point>();
+
+            Point previousPoint = keyPoints.First();
+            keyPoints.Skip(1).ToList().ForEach(p =>
             {
-                if(previousPoint.X != -1)
-                {
-                    points.AddRange(new LineCreator(previousPoint, p).Line);
-                }
+                linearizedPoints.AddRange(new LineCreator(previousPoint, p).Line);
                 previousPoint = p;
             });
 
-            _points.Clear();
-            _points.AddRange(points);
-            
-            List<Point> secoundQuarter = new List<Point>();
-            List<Point> thirdQuarter = new List<Point>();
-            List<Point> forthQuarter = new List<Point>();
+            return linearizedPoints;
+        }
 
-            foreach (var point in _points)
+        public Point GeneratePointInSecoundQuarterOfCircle(Point pointInFirstHalf)
+        {
+            return new Point(maxX - pointInFirstHalf.X, pointInFirstHalf.Y);
+        }
+
+        public Point GeneratePointInThirdQuarterOfCircle(Point pointInFirstHalf)
+        {
+            return new Point(maxX - pointInFirstHalf.X, maxY - pointInFirstHalf.Y);
+        }
+
+        public Point GeneratePointInForthQuarterOfCircle(Point pointInFirstHalf)
+        {
+            return new Point(pointInFirstHalf.X, maxY - pointInFirstHalf.Y);
+        }
+
+        public List<Point> GenerateWholeCirceFromArcInFirstHalf(List<Point> arc)
+        {
+            List<Point> secoudQuarterArc = new List<Point>();
+            List<Point> thirdQuarterArc = new List<Point>();
+            List<Point> forthQuarterArc = new List<Point>();
+
+            arc.ForEach(p => 
             {
-                // kolejne ćwiartki
-                Point p = new Point(point.X, maxY - point.Y);
-                forthQuarter.Add(p);
-                p = new Point(maxX - point.X, point.Y);
-                secoundQuarter.Add(p);
-                p = new Point(maxX - point.X, maxY - point.Y);
-                thirdQuarter.Add(p);
-            }
+                secoudQuarterArc.Add(GeneratePointInSecoundQuarterOfCircle(p));
+                thirdQuarterArc.Add(GeneratePointInThirdQuarterOfCircle(p));
+                forthQuarterArc.Add(GeneratePointInForthQuarterOfCircle(p));
+            });
 
-            #region debug
+            List<Point> circle = arc;
+            circle.AddRange(secoudQuarterArc);
+            circle.AddRange(thirdQuarterArc);
+            circle.AddRange(forthQuarterArc);
 
-
-            int[,] tab = new int[maxX + 1, maxY + 1];
-            points.ForEach(p => tab[p.X, p.Y] = 1);
-            secoundQuarter.ForEach(p => tab[p.X, p.Y] = 2);
-            thirdQuarter.ForEach(p => tab[p.X, p.Y] = 3);
-            forthQuarter.ForEach(p => tab[p.X, p.Y] = 4);
-
-            for (int i = 0; i < maxX; i++)
-            {
-                for (int j = 0; j < maxY; j++)
-                {
-                    Console.Write(tab[i, j]);
-                }
-                Console.WriteLine();
-            }
-
-            #endregion
-
-            PointsOnCircle = points;
+            return circle;
         }
     }
 }
