@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using PierwszyProjekt.DataTypes;
 
 namespace PierwszyProjekt
 {
@@ -126,6 +127,52 @@ namespace PierwszyProjekt
             {
                 textBox1.Text = fileDialog.FileName;
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            int max = 80;
+            CircleCreator cc = new CircleCreator(max, max);
+            Circle c = new Circle(max, max, max / 2, cc.PointsOnCircle.ToArray());
+            EmiterGenerator eg = new EmiterGenerator(5, c);
+
+            List<EmiterDetectorsSystem> systems = new List<EmiterDetectorsSystem>();
+
+            eg.Emiters.ForEach(em =>
+            {
+                DetectorsGenerator dg = new DetectorsGenerator(20, 60, c, em);
+                systems.Add(new EmiterDetectorsSystem(em, dg.Detectors));
+
+
+                #region debug console
+                int[,] debugTab = new int[max + 1, max + 1];
+                for (int i = 0; i < max + 1; i++)
+                {
+                    for (int j = 0; j < max + 1; j++)
+                    {
+                        debugTab[i, j] = 0;
+                    }
+                }
+                debugTab[em.Point.X, em.Point.Y] = 3;
+                dg.Detectors.ForEach(d => debugTab[d.Point.X, d.Point.Y] = 1);
+
+                EmiterDetectorsSystem s = systems.Last();
+
+                s.Detectors.ForEach(de => s.GetLineForDetector(de).Points.ForEach(point => debugTab[point.X, point.Y] = 4));
+
+                for (int i = 0; i < max + 1; i++)
+                {
+                    for (int j = 0; j < max + 1; j++)
+                    {
+                        Console.Write(debugTab[i, j]);
+                    }
+                    Console.WriteLine();
+                }
+                Console.ReadLine();
+                Console.Clear();
+                #endregion
+
+            });
         }
     }
 }

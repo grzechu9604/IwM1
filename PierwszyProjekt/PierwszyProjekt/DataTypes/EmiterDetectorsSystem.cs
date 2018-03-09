@@ -16,5 +16,10 @@ namespace PierwszyProjekt.DataTypes
             Emiter = emiter;
             Detectors = detectors;
         }
+
+        public Line GetLineForDetector(Detector d)
+        {
+            return new Line(Emiter.Point, d.Point);
+        }
     }
 }

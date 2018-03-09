@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Algorithms\CircleCreatorTests.cs" />
     <Compile Include="Algorithms\DetectorsGeneratorTests.cs" />
+    <Compile Include="Algorithms\EmiterGeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -25,7 +25,7 @@ namespace PierwszyProjekt.Algorithms
             List<Detector> detectors = new List<Detector>();
 
             int amountOfPossibleDetectorsPoints = angularSpread * circle.AmountOfPoints / 360;
-            int stepInPoints = (int)((double)angularSpread / amountOfDetectors * circle.AmountOfPoints);
+            int stepInPoints = amountOfPossibleDetectorsPoints / amountOfDetectors;
             int skipPointsAtTheBegginning = (circle.AmountOfPoints - amountOfPossibleDetectorsPoints) / 2;
             int emiterIndex = circle.GetIndex(emiter.Point);
             int createdDetectors = 0;

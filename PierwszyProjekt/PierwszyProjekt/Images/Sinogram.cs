@@ -30,18 +30,16 @@ namespace PierwszyProjekt.Images
 
         private void DoRandonTransform(BaseImage image, int n, int a, int l)
         {
-            // TODO: CircleCreator musi tworzyć okrąg, który będzie tworzył taka list punktów, że będą one ze sobą sąsiadować, sprawa istotna przy przeskokach (korzystaniu z symertrii)
             CircleCreator cc = new CircleCreator(image.Bitmap.Width, image.Bitmap.Height);
             Circle circle = new Circle(image.Bitmap.Width, image.Bitmap.Height, image.Bitmap.Width / 2, cc.PointsOnCircle.ToArray());
             EmiterGenerator eg = new EmiterGenerator(a, circle);
             List<EmiterDetectorsSystem> systems = new List<EmiterDetectorsSystem>();
-
+            
             eg.Emiters.ForEach(e =>
             {
                 DetectorsGenerator dg = new DetectorsGenerator(n, l, circle, e);
                 systems.Add(new EmiterDetectorsSystem(e, dg.Detectors));
             });
-            
 
             Bitmap = image.Bitmap;
             Color colour;
