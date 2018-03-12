@@ -17,9 +17,9 @@ namespace PierwszyProjekt
     public partial class Form1 : Form
     {
         string thePath;
-        string element_a;
-        string element_n;
-        string element_l;
+        string element_a = "5";
+        string element_n = "20";
+        string element_l = "40";
         public int element_int_a;
         public int element_int_n;
         public int element_int_l;
@@ -71,20 +71,21 @@ namespace PierwszyProjekt
         {
             try
             {
-                if (checkIsImageNull(this.pictureBox1) || checkIsElementsNull())
+                if (baseImage == null || checkIsElementsNull())
                 {
-                    throw new Exception();
+                    throw new Exception("Nie wystarczające parametry do wykonania akcji!");
                 }
 
                 Console.Write("Elements: " + element_int_a + ", " +  element_int_n + ", " + element_int_l + "\n");
 
                 //DoRandonTransform
+
                 sinogram = new Sinogram(baseImage, element_int_n, element_int_a, element_int_l);
-                sinogram.Display(this.FilePicker);
+                sinogram.Display(this.pictureBox2);
 
                 //DoReversedRandonTransform
                 outImage = new BaseImage(sinogram);
-                outImage.Display(this.pictureBox3);
+                //outImage.Display(this.pictureBox3);
             }
             catch (Exception ex)
             {
@@ -142,37 +143,39 @@ namespace PierwszyProjekt
             {
                 DetectorsGenerator dg = new DetectorsGenerator(20, 60, c, em);
                 systems.Add(new EmiterDetectorsSystem(em, dg.Detectors));
-
-
+                
                 #region debug console
-                int[,] debugTab = new int[max + 1, max + 1];
-                for (int i = 0; i < max + 1; i++)
-                {
-                    for (int j = 0; j < max + 1; j++)
-                    {
-                        debugTab[i, j] = 0;
-                    }
-                }
-                debugTab[em.Point.X, em.Point.Y] = 3;
-                dg.Detectors.ForEach(d => debugTab[d.Point.X, d.Point.Y] = 1);
+                //int[,] debugTab = new int[max + 1, max + 1];
+                //for (int i = 0; i < max + 1; i++)
+                //{
+                //    for (int j = 0; j < max + 1; j++)
+                //    {
+                //        debugTab[i, j] = 0;
+                //    }
+                //}
+                //debugTab[em.Point.X, em.Point.Y] = 3;
+                //dg.Detectors.ForEach(d => debugTab[d.Point.X, d.Point.Y] = 1);
 
-                EmiterDetectorsSystem s = systems.Last();
+                //EmiterDetectorsSystem s = systems.Last();
 
-                s.Detectors.ForEach(de => s.GetLineForDetector(de).Points.ForEach(point => debugTab[point.X, point.Y] = 4));
+                //s.Detectors.ForEach(de => s.GetLineForDetector(de).Points.ForEach(point => debugTab[point.X, point.Y] = 4));
 
-                for (int i = 0; i < max + 1; i++)
-                {
-                    for (int j = 0; j < max + 1; j++)
-                    {
-                        Console.Write(debugTab[i, j]);
-                    }
-                    Console.WriteLine();
-                }
-                Console.ReadLine();
-                Console.Clear();
+                //for (int i = 0; i < max + 1; i++)
+                //{
+                //    for (int j = 0; j < max + 1; j++)
+                //    {
+                //        Console.Write(debugTab[i, j]);
+                //    }
+                //    Console.WriteLine();
+                //}
+                //Console.ReadLine();
+                //Console.Clear();
                 #endregion
 
             });
+
+            BitmapToBlackAndWhiteConverter converter = new BitmapToBlackAndWhiteConverter(this.baseImage.Bitmap);
+
         }
     }
 }

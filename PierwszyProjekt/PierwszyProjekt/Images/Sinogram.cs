@@ -30,34 +30,63 @@ namespace PierwszyProjekt.Images
 
         private void DoRandonTransform(BaseImage image, int n, int a, int l)
         {
-            CircleCreator cc = new CircleCreator(image.Bitmap.Width, image.Bitmap.Height);
-            Circle circle = new Circle(image.Bitmap.Width, image.Bitmap.Height, image.Bitmap.Width / 2, cc.PointsOnCircle.ToArray());
+            CircleCreator cc = new CircleCreator(image.Bitmap.Width - 1, image.Bitmap.Height - 1);
+            Circle circle = new Circle(image.Bitmap.Width - 1, image.Bitmap.Height - 1, image.Bitmap.Width / 2, cc.PointsOnCircle.ToArray());
             EmiterGenerator eg = new EmiterGenerator(a, circle);
             List<EmiterDetectorsSystem> systems = new List<EmiterDetectorsSystem>();
-            
+
+            BitmapToBlackAndWhiteConverter blackBitmap = new BitmapToBlackAndWhiteConverter(image.Bitmap);
+
+            Bitmap = new Bitmap(eg.Emiters.ToArray().Length, n + 1);
+
+            int emiterIndex = 0;
             eg.Emiters.ForEach(e =>
             {
                 DetectorsGenerator dg = new DetectorsGenerator(n, l, circle, e);
                 systems.Add(new EmiterDetectorsSystem(e, dg.Detectors));
+
+                systems.ForEach(s =>
+                {
+                    int detectorIndex = 0;
+                    s.Detectors.ForEach(detector =>
+                    {
+                        LineCreator lc = new LineCreator(e.Point, detector.Point);
+                        LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
+
+                        int average = Convert.ToInt32(summer.Average);
+
+                        Color c = Color.FromArgb(average, average, average);
+                        this.Bitmap.SetPixel(emiterIndex, detectorIndex++, c);
+                    });
+                });
+                emiterIndex++;
             });
 
-            Bitmap = image.Bitmap;
-            Color colour;
+           
+            //eg.Emiters.ForEach(e =>
+            //{
+            //    int i = 0;
+            //    EmiterDetectorsSystem system = new EmiterDetectorsSystem(e, dg.Detectors);
+            //});
+
+
+            //Bitmap = image.Bitmap;
+            //Color colour;
 
             /*
             Kolor każdego piksela jest przedstawiana jako 32-bitową liczbą: 8 bity każda alfa, czerwony, zielony i niebieski (ang.).
             Każdy z czterech składników jest liczba z przedziału od 0 do 255, gdzie 0 reprezentuje natężenie do 255 reprezentuje
             pełną intensywność. 
-            */
-            int[,] bitmapArray = new int[Bitmap.Height, Bitmap.Width];
-            for (int i = 0; i < Bitmap.Height; i++)
-            {
-                for (int j = 0; j < Bitmap.Width; j++)
-                {
-                    colour = Bitmap.GetPixel(i, j);
-                    bitmapArray[i, j] = colour.R + colour.G + colour.B;
-                }
-            }
+            //*/
+            //int[,] bitmapArray = new int[Bitmap.Height, Bitmap.Width];
+            //for (int i = 0; i < Bitmap.Height; i++)
+            //{
+            //    for (int j = 0; j < Bitmap.Width; j++)
+            //    {
+            //        colour = Bitmap.GetPixel(i, j);
+            //        bitmapArray[i, j] = colour.R + colour.G + colour.B;
+            //    }
+            //}
 
             /*
                 Czym jest rozpiętość kątowa dla Układu równoległego(np. dla 1 detektora)?
@@ -92,7 +121,6 @@ namespace PierwszyProjekt.Images
                 Console.WriteLine();
             }
             */
-
             Console.Write("I will do --> DoRandonTransform\n");
         }
     }

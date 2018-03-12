@@ -14,11 +14,10 @@ namespace PierwszyProjekt.Algorithms
         
         private List<Emiter> GenerateEmiters(int amountOfEmiters, Circle circle)
         {
-            int amountOfPointsInFirstHalf = circle.AmountOfPoints / 2;
-            int step = amountOfPointsInFirstHalf / amountOfEmiters;
+            int step = circle.AmountOfPoints / amountOfEmiters;
             List<Emiter> emiters = new List<Emiter>();
 
-            for (int i = 0; i < amountOfPointsInFirstHalf; i += step)
+            for (int i = 0; i < circle.AmountOfPoints; i += step)
             {
                 emiters.Add(new Emiter(circle.PointsOnACircle[i]));
             }
