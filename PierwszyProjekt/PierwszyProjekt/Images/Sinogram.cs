@@ -43,12 +43,11 @@ namespace PierwszyProjekt.Images
             eg.Emiters.ForEach(e =>
             {
                 DetectorsGenerator dg = new DetectorsGenerator(n, l, circle, e);
-                systems.Add(new EmiterDetectorsSystem(e, dg.Detectors));
+                EmiterDetectorsSystem newSystem = new EmiterDetectorsSystem(e, dg.Detectors);
+                systems.Add(newSystem);
 
-                systems.ForEach(s =>
-                {
-                    int detectorIndex = 0;
-                    s.Detectors.ForEach(detector =>
+                int detectorIndex = 0;
+                newSystem.Detectors.ForEach(detector =>
                     {
                         LineCreator lc = new LineCreator(e.Point, detector.Point);
                         LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
@@ -58,11 +57,10 @@ namespace PierwszyProjekt.Images
                         Color c = Color.FromArgb(average, average, average);
                         Bitmap.SetPixel(emiterIndex, detectorIndex++, c);
                     });
-                });
                 emiterIndex++;
             });
 
-           
+
             Console.Write("DoRandonTransform --> DONE\n");
         }
     }
