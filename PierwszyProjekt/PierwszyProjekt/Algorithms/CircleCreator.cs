@@ -21,8 +21,7 @@ namespace PierwszyProjekt.Algorithms
         public void CreateCircle()
         {
             List<Point> keyPoints = GenerateKeyPointsInFirstQuarter();
-            List<Point> firstQuarterArc = GeneratePointsOnArcFromKeyPoints(keyPoints);
-            PointsOnCircle = GenerateWholeCirceFromArcInFirstHalf(firstQuarterArc);
+            PointsOnCircle = GenerateWholeCirceFromArcInFirstHalf(keyPoints);
         }
 
         public List<Point> GenerateKeyPointsInFirstQuarter()
@@ -49,21 +48,7 @@ namespace PierwszyProjekt.Algorithms
 
             return points;
         }
-
-        public List<Point> GeneratePointsOnArcFromKeyPoints(List<Point> keyPoints)
-        {
-            List<Point> linearizedPoints = new List<Point>();
-
-            Point previousPoint = keyPoints.First();
-            keyPoints.Skip(1).ToList().ForEach(p =>
-            {
-                linearizedPoints.AddRange(new LineCreator(previousPoint, p).Line);
-                previousPoint = p;
-            });
-
-            return linearizedPoints;
-        }
-
+        
         public Point GeneratePointInSecoundQuarterOfCircle(Point pointInFirstHalf)
         {
             return new Point(maxX - pointInFirstHalf.X, pointInFirstHalf.Y);

@@ -17,9 +17,9 @@ namespace PierwszyProjekt
     public partial class Form1 : Form
     {
         string thePath;
-        string element_a = "5";
-        string element_n = "20";
-        string element_l = "40";
+        string element_a = "1";
+        string element_n = "100";
+        string element_l = "90";
         public int element_int_a;
         public int element_int_n;
         public int element_int_l;
