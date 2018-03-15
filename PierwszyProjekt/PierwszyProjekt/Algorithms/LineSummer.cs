@@ -44,7 +44,7 @@ namespace PierwszyProjekt.Algorithms
                 AmountOfPoints++;
             }
 
-            if(AmountOfPoints > 0)
+            if (AmountOfPoints > 0)
             {
                 if (AmountOfPoints > 5)
                 {
@@ -55,8 +55,6 @@ namespace PierwszyProjekt.Algorithms
                     Average = Sum / AmountOfPoints;
                 }
             }
-
         }
-
     }
 }

@@ -13,6 +13,7 @@ namespace PierwszyProjekt.Images
     public class Sinogram : IDisplayable
     {
         public Bitmap Bitmap { private set; get; }
+        private int[,] averageTable;
 
         public long IterationAmount { set; get; }
         private double Alfa { set; get; }
@@ -37,7 +38,8 @@ namespace PierwszyProjekt.Images
 
             BitmapToBlackAndWhiteConverter blackBitmap = new BitmapToBlackAndWhiteConverter(image.Bitmap);
 
-            Bitmap = new Bitmap(eg.Emiters.ToArray().Length, n + 1);
+            averageTable = new int[eg.Emiters.ToArray().Length, n + 1];
+            int maxAverage = int.MinValue;
 
             int emiterIndex = 0;
             eg.Emiters.ForEach(e =>
@@ -53,15 +55,45 @@ namespace PierwszyProjekt.Images
                         LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
 
                         int average = Convert.ToInt32(summer.Average);
+                        averageTable[emiterIndex, detectorIndex++] = average;
 
-                        Color c = Color.FromArgb(average, average, average);
-                        Bitmap.SetPixel(emiterIndex, detectorIndex++, c);
+                        if (average > maxAverage)
+                        {
+                            maxAverage = average;
+                        }
                     });
                 emiterIndex++;
             });
 
+            NormalizeAverageTab(eg.Emiters.ToArray().Length, n + 1, maxAverage);
+            GenerateBitmap(eg.Emiters.ToArray().Length, n + 1);
 
             Console.Write("DoRandonTransform --> DONE\n");
+        }
+
+        private void NormalizeAverageTab(int maxX, int maxY, int maxAverage)
+        {
+            for (int i = 0; i < maxX; i++)
+            {
+                for (int j = 0; j < maxY; j++)
+                {
+                    averageTable[i, j] = averageTable[i, j] * 255 / maxAverage;
+                }
+            }
+        }
+
+        private void GenerateBitmap(int maxX, int maxY)
+        {
+            Bitmap = new Bitmap(maxX, maxY);
+
+            for (int i = 0; i < maxX; i++)
+            {
+                for (int j = 0; j < maxY; j++)
+                {
+                    Color c = Color.FromArgb(averageTable[i, j], averageTable[i, j], averageTable[i, j]);
+                    Bitmap.SetPixel(i, j, c);
+                }
+            }
         }
     }
 }
