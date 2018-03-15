@@ -13,7 +13,7 @@ namespace PierwszyProjekt.Images
     public class Sinogram : IDisplayable
     {
         public Bitmap Bitmap { private set; get; }
-        private int[,] averageTable;
+        private double[,] averageTable;
 
         public long IterationAmount { set; get; }
         private double Alfa { set; get; }
@@ -38,8 +38,8 @@ namespace PierwszyProjekt.Images
 
             BitmapToBlackAndWhiteConverter blackBitmap = new BitmapToBlackAndWhiteConverter(image.Bitmap);
 
-            averageTable = new int[eg.Emiters.ToArray().Length, n + 1];
-            int maxAverage = int.MinValue;
+            averageTable = new double[eg.Emiters.ToArray().Length, n + 1];
+            double maxAverage = double.MinValue;
 
             int emiterIndex = 0;
             eg.Emiters.ForEach(e =>
@@ -53,13 +53,12 @@ namespace PierwszyProjekt.Images
                     {
                         LineCreator lc = new LineCreator(e.Point, detector.Point);
                         LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
+                        
+                        averageTable[emiterIndex, detectorIndex++] = summer.Average;
 
-                        int average = Convert.ToInt32(summer.Average);
-                        averageTable[emiterIndex, detectorIndex++] = average;
-
-                        if (average > maxAverage)
+                        if (summer.Average > maxAverage)
                         {
-                            maxAverage = average;
+                            maxAverage = summer.Average;
                         }
                     });
                 emiterIndex++;
@@ -71,7 +70,7 @@ namespace PierwszyProjekt.Images
             Console.Write("DoRandonTransform --> DONE\n");
         }
 
-        private void NormalizeAverageTab(int maxX, int maxY, int maxAverage)
+        private void NormalizeAverageTab(int maxX, int maxY, double maxAverage)
         {
             for (int i = 0; i < maxX; i++)
             {
@@ -90,7 +89,8 @@ namespace PierwszyProjekt.Images
             {
                 for (int j = 0; j < maxY; j++)
                 {
-                    Color c = Color.FromArgb(averageTable[i, j], averageTable[i, j], averageTable[i, j]);
+                    int average = Convert.ToInt32(averageTable[i, j]);
+                    Color c = Color.FromArgb(average, average, average);
                     Bitmap.SetPixel(i, j, c);
                 }
             }
