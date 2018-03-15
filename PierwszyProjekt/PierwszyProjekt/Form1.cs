@@ -84,8 +84,8 @@ namespace PierwszyProjekt
                 sinogram.Display(this.pictureBox2);
 
                 //DoReversedRandonTransform
-                outImage = new BaseImage(sinogram);
-                //outImage.Display(this.pictureBox3);
+                outImage = sinogram.outPutImage;
+                outImage.Display(this.pictureBox3);
             }
             catch (Exception ex)
             {

@@ -14,13 +14,28 @@ namespace PierwszyProjekt.Images
     {
         public Bitmap Bitmap { private set; get; }
         private double[,] averageTable;
+        public BaseImage outPutImage { private set; get; }
 
         public long IterationAmount { set; get; }
         private double Alfa { set; get; }
 
         public Sinogram(BaseImage image, int n, int a, int l)
         {
+            outPutImage = new BaseImage(image.Bitmap.Width, image.Bitmap.Height);
+            outPutImage.sumOfAverageTable = new double[image.Bitmap.Width, image.Bitmap.Height];
+            outPutImage.countOfAverageTable = new double[image.Bitmap.Width, image.Bitmap.Height];
+
+            for (int i = 0; i < image.Bitmap.Width; i++)
+            {
+                for (int j = 0; j < image.Bitmap.Height; j++)
+                {
+                    outPutImage.sumOfAverageTable[i, j] = 0;
+                    outPutImage.countOfAverageTable[i, j] = 0;
+                }
+            }
+
             DoRandonTransform(image, n, a, l);
+            outPutImage.DoReversedRandonTransform();
         }
 
         public void Display(PictureBox pictureBox)
@@ -53,6 +68,12 @@ namespace PierwszyProjekt.Images
                     {
                         LineCreator lc = new LineCreator(e.Point, detector.Point);
                         LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
+
+                        for(int p = 0; p < lc.Line.Count(); p++)
+                        {
+                            outPutImage.sumOfAverageTable[lc.Line.ElementAt(p).X, lc.Line.ElementAt(p).Y] += summer.Average;
+                            outPutImage.countOfAverageTable[lc.Line.ElementAt(p).X, lc.Line.ElementAt(p).Y] += 1;
+                        }
                         
                         averageTable[emiterIndex, detectorIndex++] = summer.Average;
 
