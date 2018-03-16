@@ -17,9 +17,6 @@ namespace PierwszyProjekt
     public partial class Form1 : Form
     {
         string thePath;
-        string element_a = "0,5";
-        string element_n = "250";
-        string element_l = "270";
         public double ValueA;
         public int ValueN;
         public int ValueL;
@@ -62,8 +59,10 @@ namespace PierwszyProjekt
 
         private bool checkIsElementsNull()
         {
-            return element_a == null || element_n == null || element_l == null
-                || !double.TryParse(element_a, out ValueA) || !int.TryParse(element_n, out ValueN) || !int.TryParse(element_l, out ValueL);
+            return textBoxA.Text == null || textBoxN.Text == null 
+                || textBoxL.Text == null || !double.TryParse(textBoxA.Text, out ValueA) 
+                || !int.TryParse(textBoxN.Text, out ValueN) 
+                || !int.TryParse(textBoxL.Text, out ValueL);
         }
 
         //button "Start algorithm" {our algorithm}
@@ -92,34 +91,7 @@ namespace PierwszyProjekt
                 MessageBox.Show("There was an error opening the bitmap." + "Please check the path." + ex);
             }
         }
-
-        //textbox "Wartość a" {load text from textbox to variable thePath}
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-            //delta
-            TextBox objTextBox = (TextBox)sender;
-            element_a = objTextBox.Text;
-            Console.Write("Element 'a' is loaded...\n");
-        }
-
-        //textbox "Wartość n" {load text from textbox to variable thePath}
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-            //liczba rzutów
-            TextBox objTextBox = (TextBox)sender;
-            element_n = objTextBox.Text;
-            Console.Write("Element 'n' is loaded...\n");
-        }
-
-        //textbox "Wartość l" {load text from textbox to variable thePath}
-        private void textBox4_TextChanged(object sender, EventArgs e)
-        {
-            //rozwartość/rozpiętość
-            TextBox objTextBox = (TextBox)sender;
-            element_l = objTextBox.Text;
-            Console.Write("Element 'l' is loaded...\n");
-        }
-
+     
         //przycisk ułatwia wybór pliku z poziomu eksploratora plików
         private void button3_Click(object sender, EventArgs e)
         {
