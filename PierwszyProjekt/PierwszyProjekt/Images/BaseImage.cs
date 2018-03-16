@@ -13,6 +13,7 @@ namespace PierwszyProjekt.Images
     {
         public double[,] SumOfAverageTable;
         public double[,] CountOfAverageTable;
+        private const int minimaleAmountOfAveragToBeOnImage = 0;
 
         public BaseImage(string filePath)
         {
@@ -33,7 +34,7 @@ namespace PierwszyProjekt.Images
             {
                 for (int j = 0; j < Bitmap.Height; j++)
                 {
-                    if (CountOfAverageTable[i, j] != 0)
+                    if (CountOfAverageTable[i, j] > minimaleAmountOfAveragToBeOnImage)
                     { 
                         SumOfAverageTable[i, j] = SumOfAverageTable[i, j] / CountOfAverageTable[i, j];
 
@@ -54,7 +55,7 @@ namespace PierwszyProjekt.Images
             GenerateBitmap(Bitmap.Width, Bitmap.Height, SumOfAverageTable);
 
             Console.Write("Max is --> " + maxValue + "\n");
-            Console.Write("I will do --> DoReversedRandonTransform\n");
+            Console.Write("DoReversedRandonTransform --> DONE\n");
         }
 
         private void setOutPutImage(int width, int height)
