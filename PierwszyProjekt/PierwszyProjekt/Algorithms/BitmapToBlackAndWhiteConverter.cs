@@ -24,7 +24,7 @@ namespace PierwszyProjekt.Algorithms
                 for (int j = 0; j < bitmap.Width; j++)
                 {
                     Color color = bitmap.GetPixel(j, i);
-                    ConvertedTab[j, i] = (color.R * weightR + color.G * weightG + color.B * weightB) / 3;
+                    ConvertedTab[j, i] = (color.R * weightR + color.G * weightG + color.B * weightB) / (weightB + weightG+ + weightR);
                 }
             }
         }

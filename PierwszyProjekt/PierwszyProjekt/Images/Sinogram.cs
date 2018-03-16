@@ -10,41 +10,36 @@ using PierwszyProjekt.DataTypes;
 
 namespace PierwszyProjekt.Images
 {
-    public class Sinogram : IDisplayable
+    public class Sinogram : AbstractImage
     {
-        public Bitmap Bitmap { private set; get; }
         private double[,] averageTable;
-        public BaseImage outPutImage { private set; get; }
+        public BaseImage OutPutImage { private set; get; }
 
         public long IterationAmount { set; get; }
         private double Alfa { set; get; }
 
-        public Sinogram(BaseImage image, int n, int a, int l)
+        public Sinogram(BaseImage image, int n, double a, int l)
         {
-            outPutImage = new BaseImage(image.Bitmap.Width, image.Bitmap.Height);
-            outPutImage.sumOfAverageTable = new double[image.Bitmap.Width, image.Bitmap.Height];
-            outPutImage.countOfAverageTable = new double[image.Bitmap.Width, image.Bitmap.Height];
+            OutPutImage = new BaseImage(image.Bitmap.Width, image.Bitmap.Height);
+            OutPutImage.SumOfAverageTable = new double[image.Bitmap.Width, image.Bitmap.Height];
+            OutPutImage.CountOfAverageTable = new double[image.Bitmap.Width, image.Bitmap.Height];
 
             for (int i = 0; i < image.Bitmap.Width; i++)
             {
                 for (int j = 0; j < image.Bitmap.Height; j++)
                 {
-                    outPutImage.sumOfAverageTable[i, j] = 0;
-                    outPutImage.countOfAverageTable[i, j] = 0;
+                    OutPutImage.SumOfAverageTable[i, j] = 0;
+                    OutPutImage.CountOfAverageTable[i, j] = 0;
                 }
             }
 
             DoRandonTransform(image, n, a, l);
-            outPutImage.DoReversedRandonTransform();
+            OutPutImage.DoReversedRandonTransform();
         }
 
-        public void Display(PictureBox pictureBox)
-        {
-            pictureBox.Image = Bitmap;
-            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-        }
 
-        private void DoRandonTransform(BaseImage image, int n, int a, int l)
+
+        private void DoRandonTransform(BaseImage image, int n, double a, int l)
         {
             CircleCreator cc = new CircleCreator(image.Bitmap.Width - 1, image.Bitmap.Height - 1);
             Circle circle = new Circle(image.Bitmap.Width - 1, image.Bitmap.Height - 1, image.Bitmap.Width / 2, cc.PointsOnCircle.ToArray());
@@ -55,6 +50,7 @@ namespace PierwszyProjekt.Images
 
             averageTable = new double[eg.Emiters.ToArray().Length, n + 1];
             double maxAverage = double.MinValue;
+            double minAverage = double.MaxValue;
 
             int emiterIndex = 0;
             eg.Emiters.ForEach(e =>
@@ -69,52 +65,31 @@ namespace PierwszyProjekt.Images
                         LineCreator lc = new LineCreator(e.Point, detector.Point);
                         LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
 
-                        for(int p = 0; p < lc.Line.Count(); p++)
+                        lc.Line.ForEach(pointOnLine =>
                         {
-                            outPutImage.sumOfAverageTable[lc.Line.ElementAt(p).X, lc.Line.ElementAt(p).Y] += summer.Average;
-                            outPutImage.countOfAverageTable[lc.Line.ElementAt(p).X, lc.Line.ElementAt(p).Y] += 1;
-                        }
-                        
+                            OutPutImage.SumOfAverageTable[pointOnLine.X, pointOnLine.Y] += summer.Average;
+                            OutPutImage.CountOfAverageTable[pointOnLine.X, pointOnLine.Y] += 1;
+                        });
+
                         averageTable[emiterIndex, detectorIndex++] = summer.Average;
 
                         if (summer.Average > maxAverage)
                         {
                             maxAverage = summer.Average;
                         }
+
+                        if (summer.Average < minAverage)
+                        {
+                            minAverage = summer.Average;
+                        }
                     });
                 emiterIndex++;
             });
 
-            NormalizeAverageTab(eg.Emiters.ToArray().Length, n + 1, maxAverage);
-            GenerateBitmap(eg.Emiters.ToArray().Length, n + 1);
+            NormalizeTab(eg.Emiters.ToArray().Length, n + 1, maxAverage, averageTable, minAverage);
+            GenerateBitmap(eg.Emiters.ToArray().Length, n + 1, averageTable);
 
             Console.Write("DoRandonTransform --> DONE\n");
-        }
-
-        private void NormalizeAverageTab(int maxX, int maxY, double maxAverage)
-        {
-            for (int i = 0; i < maxX; i++)
-            {
-                for (int j = 0; j < maxY; j++)
-                {
-                    averageTable[i, j] = averageTable[i, j] * 255 / maxAverage;
-                }
-            }
-        }
-
-        private void GenerateBitmap(int maxX, int maxY)
-        {
-            Bitmap = new Bitmap(maxX, maxY);
-
-            for (int i = 0; i < maxX; i++)
-            {
-                for (int j = 0; j < maxY; j++)
-                {
-                    int average = Convert.ToInt32(averageTable[i, j]);
-                    Color c = Color.FromArgb(average, average, average);
-                    Bitmap.SetPixel(i, j, c);
-                }
-            }
         }
     }
 }

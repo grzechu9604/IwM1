@@ -21,7 +21,8 @@ namespace PierwszyProjekt.Algorithms
         public void CreateCircle()
         {
             List<Point> keyPoints = GenerateKeyPointsInFirstQuarter();
-            PointsOnCircle = GenerateWholeCirceFromArcInFirstHalf(keyPoints);
+            List<Point> firstQuarterArc = GeneratePointsOnArcFromKeyPoints(keyPoints);
+            PointsOnCircle = GenerateWholeCirceFromArcInFirstHalf(firstQuarterArc);
         }
 
         public List<Point> GenerateKeyPointsInFirstQuarter()
@@ -29,7 +30,7 @@ namespace PierwszyProjekt.Algorithms
             List<Point> points = new List<Point>();
 
             int radius = maxX / 2;
-            
+
             for (int x = 0; x <= radius; x++)
             {
                 Tuple<Point, double> min = new Tuple<Point, double>(new Point(x, 0), Math.Abs(Math.Pow(radius - x, 2) + Math.Pow(radius, 2) - Math.Pow(radius, 2)));
@@ -48,7 +49,7 @@ namespace PierwszyProjekt.Algorithms
 
             return points;
         }
-        
+
         public Point GeneratePointInSecoundQuarterOfCircle(Point pointInFirstHalf)
         {
             return new Point(maxX - pointInFirstHalf.X, pointInFirstHalf.Y);
@@ -70,7 +71,7 @@ namespace PierwszyProjekt.Algorithms
             List<Point> thirdQuarterArc = new List<Point>();
             List<Point> forthQuarterArc = new List<Point>();
 
-            arc.ForEach(p => 
+            arc.ForEach(p =>
             {
                 secoudQuarterArc.Add(GeneratePointInSecoundQuarterOfCircle(p));
                 thirdQuarterArc.Add(GeneratePointInThirdQuarterOfCircle(p));
@@ -85,6 +86,20 @@ namespace PierwszyProjekt.Algorithms
             circle.AddRange(forthQuarterArc);
 
             return circle;
+        }
+
+        public List<Point> GeneratePointsOnArcFromKeyPoints(List<Point> keyPoints)
+        {
+            List<Point> linearizedPoints = new List<Point>();
+
+            Point previousPoint = keyPoints.First();
+            keyPoints.Skip(1).ToList().ForEach(p =>
+            {
+                linearizedPoints.AddRange(new LineCreator(previousPoint, p).Line);
+                previousPoint = p;
+            });
+
+            return linearizedPoints;
         }
     }
 }

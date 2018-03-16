@@ -17,12 +17,12 @@ namespace PierwszyProjekt
     public partial class Form1 : Form
     {
         string thePath;
-        string element_a = "1";
-        string element_n = "100";
-        string element_l = "90";
-        public int element_int_a;
-        public int element_int_n;
-        public int element_int_l;
+        string element_a = "0,5";
+        string element_n = "250";
+        string element_l = "270";
+        public double ValueA;
+        public int ValueN;
+        public int ValueL;
         BaseImage baseImage;
         Sinogram sinogram;
         BaseImage outImage;
@@ -63,7 +63,7 @@ namespace PierwszyProjekt
         private bool checkIsElementsNull()
         {
             return element_a == null || element_n == null || element_l == null
-                || !int.TryParse(element_a, out element_int_a) || !int.TryParse(element_n, out element_int_n) || !int.TryParse(element_l, out element_int_l);
+                || !double.TryParse(element_a, out ValueA) || !int.TryParse(element_n, out ValueN) || !int.TryParse(element_l, out ValueL);
         }
 
         //button "Start algorithm" {our algorithm}
@@ -76,15 +76,15 @@ namespace PierwszyProjekt
                     throw new Exception("Nie wystarczające parametry do wykonania akcji!");
                 }
 
-                Console.Write("Elements: " + element_int_a + ", " +  element_int_n + ", " + element_int_l + "\n");
+                Console.Write("Elements: " + ValueA + ", " +  ValueN + ", " + ValueL + "\n");
 
                 //DoRandonTransform
 
-                sinogram = new Sinogram(baseImage, element_int_n, element_int_a, element_int_l);
+                sinogram = new Sinogram(baseImage, ValueN, ValueA, ValueL);
                 sinogram.Display(this.pictureBox2);
 
                 //DoReversedRandonTransform
-                outImage = sinogram.outPutImage;
+                outImage = sinogram.OutPutImage;
                 outImage.Display(this.pictureBox3);
             }
             catch (Exception ex)
