@@ -16,6 +16,11 @@ namespace PierwszyProjekt.Algorithms
         private List<Emiter> GenerateEmiters(double amountOfEmiters, Circle circle)
         {
             int step = Convert.ToInt32(circle.AmountOfPoints / amountOfEmiters);
+            if (step == 0)
+            {
+                step = 1;
+            }
+
             List<Emiter> emiters = new List<Emiter>();
 
             for (int i = 0; i < circle.AmountOfPoints; i += step)
