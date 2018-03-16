@@ -13,7 +13,7 @@ namespace PierwszyProjekt.Images
     {
         public double[,] SumOfAverageTable;
         public double[,] CountOfAverageTable;
-        private const int minimaleAmountOfAveragToBeOnImage = 0;
+        private const int minimalAmountOfAveragesToBeOnImage = 1;
 
         public BaseImage(string filePath)
         {
@@ -34,7 +34,7 @@ namespace PierwszyProjekt.Images
             {
                 for (int j = 0; j < Bitmap.Height; j++)
                 {
-                    if (CountOfAverageTable[i, j] > minimaleAmountOfAveragToBeOnImage)
+                    if (CountOfAverageTable[i, j] >= minimalAmountOfAveragesToBeOnImage)
                     { 
                         SumOfAverageTable[i, j] = SumOfAverageTable[i, j] / CountOfAverageTable[i, j];
 
