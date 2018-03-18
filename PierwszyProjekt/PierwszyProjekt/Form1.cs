@@ -20,9 +20,9 @@ namespace PierwszyProjekt
         public double ValueA;
         public int ValueN;
         public int ValueL;
+        public static int trackbar;
         BaseImage baseImage;
         Sinogram sinogram;
-        BaseImage outImage;
 
         public Form1()
         {
@@ -78,13 +78,29 @@ namespace PierwszyProjekt
                 Console.Write("Elements: " + ValueA + ", " +  ValueN + ", " + ValueL + "\n");
 
                 //DoRandonTransform
-
                 sinogram = new Sinogram(baseImage, ValueN, ValueA, ValueL);
                 sinogram.Display(this.pictureBox2);
 
                 //DoReversedRandonTransform
-                outImage = sinogram.OutPutImage;
-                outImage.Display(this.pictureBox3);
+                //outImage = sinogram.OutPutImage;
+                //outImage.Display(this.pictureBox3);
+
+                //Bitmap outBitmap = Filter.MedianFilter(sinogram.OutPutImage.Bitmap, 3);
+                Bitmap outBitmap = sinogram.OutPutImage.Bitmap;
+                pictureBox3.Image = outBitmap;
+                this.pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
+   
+                //Błąd średniokwadratowy
+                double MSE = 0.0;
+                for (int i = 0; i < baseImage.Bitmap.Height; ++i)
+                {
+                    for (int j = 0; j < baseImage.Bitmap.Width; ++j)
+                    {
+                        MSE += Math.Pow((baseImage.Bitmap.GetPixel(i, j).ToArgb() -
+                            outBitmap.GetPixel(i, j).ToArgb()), 2);
+                    }
+                }
+                label8.Text = (Math.Sqrt(MSE/(baseImage.Bitmap.Width * baseImage.Bitmap.Height))).ToString();
             }
             catch (Exception ex)
             {
@@ -148,6 +164,14 @@ namespace PierwszyProjekt
 
             BitmapToBlackAndWhiteConverter converter = new BitmapToBlackAndWhiteConverter(this.baseImage.Bitmap);
 
+        }
+
+        private void trackBar1_Scroll_1(object sender, EventArgs e)
+        {
+            //label8.Text = "<>" + trackBar1.Value + "<>";
+            trackbar = trackBar1.Value;
+            this.button2_Click(sender, e);
+            
         }
     }
 }

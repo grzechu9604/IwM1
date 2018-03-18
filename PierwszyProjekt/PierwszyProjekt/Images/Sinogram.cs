@@ -48,6 +48,10 @@ namespace PierwszyProjekt.Images
 
             BitmapToBlackAndWhiteConverter blackBitmap = new BitmapToBlackAndWhiteConverter(image.Bitmap);
 
+            int krok = eg.Emiters.Count / 10; 
+            int suwak = Form1.trackbar * krok; 
+            if(Form1.trackbar != 10) eg.Emiters.RemoveRange(suwak, (eg.Emiters.Count - suwak)-1);
+
             averageTable = new double[eg.Emiters.ToArray().Length, n + 1];
             double maxAverage = double.MinValue;
             double minAverage = double.MaxValue;
@@ -64,11 +68,11 @@ namespace PierwszyProjekt.Images
                     {
                         LineCreator lc = new LineCreator(e.Point, detector.Point);
                         LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
-
+                                              
                         lc.Line.ForEach(pointOnLine =>
                         {
-                            OutPutImage.SumOfAverageTable[pointOnLine.X, pointOnLine.Y] += summer.Average;
-                            OutPutImage.CountOfAverageTable[pointOnLine.X, pointOnLine.Y] += 1;
+                             OutPutImage.SumOfAverageTable[pointOnLine.X, pointOnLine.Y] += summer.Average;
+                             OutPutImage.CountOfAverageTable[pointOnLine.X, pointOnLine.Y] += 1;
                         });
 
                         averageTable[emiterIndex, detectorIndex++] = summer.Average;
@@ -86,6 +90,7 @@ namespace PierwszyProjekt.Images
                 emiterIndex++;
             });
 
+            
             NormalizeTab(eg.Emiters.ToArray().Length, n + 1, maxAverage, averageTable, minAverage);
             GenerateBitmap(eg.Emiters.ToArray().Length, n + 1, averageTable);
 

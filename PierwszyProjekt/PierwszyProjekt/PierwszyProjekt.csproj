@@ -48,6 +48,7 @@
     <Compile Include="Algorithms\BitmapToBlackAndWhiteConverter.cs" />
     <Compile Include="Algorithms\DetectorsGenerator.cs" />
     <Compile Include="Algorithms\EmiterGenerator.cs" />
+    <Compile Include="Algorithms\Filter.cs" />
     <Compile Include="Algorithms\LineCreator.cs" />
     <Compile Include="Algorithms\CircleCreator.cs" />
     <Compile Include="Algorithms\LineSummer.cs" />
@@ -64,6 +65,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Images\AbstractImage.cs" />
+    <Compile Include="Images\IBaseImage.cs" />
     <Compile Include="Images\IDisplayable.cs" />
     <Compile Include="Images\BaseImage.cs" />
     <Compile Include="Images\Sinogram.cs" />

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections;
+﻿using PierwszyProjekt.Algorithms;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace PierwszyProjekt.Images
 {
-    public class BaseImage : AbstractImage
+    public class BaseImage : AbstractImage, IBaseImage
     {
         public double[,] SumOfAverageTable;
         public double[,] CountOfAverageTable;
@@ -36,7 +35,8 @@ namespace PierwszyProjekt.Images
                 {
                     if (CountOfAverageTable[i, j] >= minimalAmountOfAveragesToBeOnImage)
                     { 
-                        SumOfAverageTable[i, j] = SumOfAverageTable[i, j] / CountOfAverageTable[i, j];
+                        SumOfAverageTable[i, j] = Math.Pow(SumOfAverageTable[i, j], 2) / CountOfAverageTable[i, j];
+                        //SumOfAverageTable[i, j] = SumOfAverageTable[i, j]/ CountOfAverageTable[i, j];
 
                         if (SumOfAverageTable[i, j] > maxValue)
                         {
@@ -58,18 +58,9 @@ namespace PierwszyProjekt.Images
             Console.Write("DoReversedRandonTransform --> DONE\n");
         }
 
-        private void setOutPutImage(int width, int height)
+        public static implicit operator BaseImage(Bitmap v)
         {
-            //outPutImage = new BaseImage(width, height);
-
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    Color c = Color.FromArgb(0, 0, 0);
-                    //outPutImage.Bitmap.SetPixel(i, j, c);
-                }
-            }
+            throw new NotImplementedException();
         }
     }
 }
