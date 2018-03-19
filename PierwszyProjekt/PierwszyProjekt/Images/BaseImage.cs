@@ -29,14 +29,48 @@ namespace PierwszyProjekt.Images
             double maxValue = double.MinValue;
             double minValue = double.MaxValue;
 
+            bool czyKoniec = false;
+            for (int i = 0; i < Bitmap.Width; i++)
+            {
+                czyKoniec = false;
+                for (int j = 0; j < Bitmap.Height; j++)
+                {
+                    Color c = Form1.oryginalBitmap.GetPixel(i, j);
+                    if (c.R == 0 && c.G == 0 && c.B == 0)
+                    {
+                        SumOfAverageTable[i, j] = 0;
+                    }else
+                    {
+                        czyKoniec = true;
+                        break;
+                    }
+                }
+
+                if (czyKoniec)
+                {
+                    for (int j = Bitmap.Height - 1; j > 0; j--)
+                    {
+                        Color c = Form1.oryginalBitmap.GetPixel(i, j);
+                        if (c.R == 0 && c.G == 0 && c.B == 0)
+                        {
+                            SumOfAverageTable[i, j] = 0;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
             for (int i = 0; i < Bitmap.Width; i++)
             {
                 for (int j = 0; j < Bitmap.Height; j++)
                 {
                     if (CountOfAverageTable[i, j] >= minimalAmountOfAveragesToBeOnImage)
-                    { 
-                        SumOfAverageTable[i, j] = Math.Pow(SumOfAverageTable[i, j], 2) / CountOfAverageTable[i, j];
-                        //SumOfAverageTable[i, j] = SumOfAverageTable[i, j]/ CountOfAverageTable[i, j];
+                    {
+                        //SumOfAverageTable[i, j] = Math.Pow(SumOfAverageTable[i, j], 2) / CountOfAverageTable[i, j];
+                        SumOfAverageTable[i, j] = SumOfAverageTable[i, j] / CountOfAverageTable[i, j];
 
                         if (SumOfAverageTable[i, j] > maxValue)
                         {

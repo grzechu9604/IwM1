@@ -23,6 +23,7 @@ namespace PierwszyProjekt
         public static int trackbar;
         BaseImage baseImage;
         Sinogram sinogram;
+        public static Bitmap oryginalBitmap;
 
         public Form1()
         {
@@ -76,14 +77,14 @@ namespace PierwszyProjekt
                 }
 
                 Console.Write("Elements: " + ValueA + ", " +  ValueN + ", " + ValueL + "\n");
+                oryginalBitmap = baseImage.Bitmap;
 
                 //DoRandonTransform
                 sinogram = new Sinogram(baseImage, ValueN, ValueA, ValueL);
                 sinogram.Display(this.pictureBox2);
 
                 //DoReversedRandonTransform
-                //outImage = sinogram.OutPutImage;
-                //outImage.Display(this.pictureBox3);
+                sinogram.OutPutImage.DoReversedRandonTransform();
 
                 //Bitmap outBitmap = Filter.MedianFilter(sinogram.OutPutImage.Bitmap, 3);
                 Bitmap outBitmap = sinogram.OutPutImage.Bitmap;

@@ -34,7 +34,6 @@ namespace PierwszyProjekt.Images
             }
 
             DoRandonTransform(image, n, a, l);
-            OutPutImage.DoReversedRandonTransform();
         }
 
 
@@ -48,8 +47,8 @@ namespace PierwszyProjekt.Images
 
             BitmapToBlackAndWhiteConverter blackBitmap = new BitmapToBlackAndWhiteConverter(image.Bitmap);
 
-            int krok = eg.Emiters.Count / 10; 
-            int suwak = Form1.trackbar * krok; 
+
+            int suwak = Form1.trackbar * (eg.Emiters.Count / 10); 
             if(Form1.trackbar != 10) eg.Emiters.RemoveRange(suwak, (eg.Emiters.Count - suwak)-1);
 
             averageTable = new double[eg.Emiters.ToArray().Length, n + 1];
