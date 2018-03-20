@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace PierwszyProjekt.Algorithms
 {
@@ -13,7 +8,7 @@ namespace PierwszyProjekt.Algorithms
         private const double weightG = 1;
         private const double weightB = 1;
 
-        public double[,] ConvertedTab { private set; get; } 
+        public double[,] ConvertedTab { private set; get; }
 
         public BitmapToBlackAndWhiteConverter(Bitmap bitmap)
         {
@@ -24,7 +19,7 @@ namespace PierwszyProjekt.Algorithms
                 for (int j = 0; j < bitmap.Width; j++)
                 {
                     Color color = bitmap.GetPixel(j, i);
-                    ConvertedTab[j, i] = (color.R * weightR + color.G * weightG + color.B * weightB) / (weightB + weightG+ + weightR);
+                    ConvertedTab[j, i] = (color.R * weightR + color.G * weightG + color.B * weightB) / (weightB + weightG + +weightR);
                 }
             }
         }

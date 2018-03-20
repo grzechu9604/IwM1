@@ -1,10 +1,5 @@
-﻿using PierwszyProjekt.Algorithms;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace PierwszyProjekt.Images
 {
@@ -39,7 +34,8 @@ namespace PierwszyProjekt.Images
                     if (c.R == 0 && c.G == 0 && c.B == 0)
                     {
                         SumOfAverageTable[i, j] = 0;
-                    }else
+                    }
+                    else
                     {
                         czyKoniec = true;
                         break;

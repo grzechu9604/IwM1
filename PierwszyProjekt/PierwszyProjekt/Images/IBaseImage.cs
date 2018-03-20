@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace PierwszyProjekt.Images
+﻿namespace PierwszyProjekt.Images
 {
     public interface IBaseImage
     {

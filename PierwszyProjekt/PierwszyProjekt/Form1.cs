@@ -1,16 +1,10 @@
 ﻿using PierwszyProjekt.Algorithms;
+using PierwszyProjekt.DataTypes;
 using PierwszyProjekt.Images;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using PierwszyProjekt.DataTypes;
 
 namespace PierwszyProjekt
 {
@@ -60,9 +54,9 @@ namespace PierwszyProjekt
 
         private bool checkIsElementsNull()
         {
-            return textBoxA.Text == null || textBoxN.Text == null 
-                || textBoxL.Text == null || !double.TryParse(textBoxA.Text, out ValueA) 
-                || !int.TryParse(textBoxN.Text, out ValueN) 
+            return textBoxA.Text == null || textBoxN.Text == null
+                || textBoxL.Text == null || !double.TryParse(textBoxA.Text, out ValueA)
+                || !int.TryParse(textBoxN.Text, out ValueN)
                 || !int.TryParse(textBoxL.Text, out ValueL);
         }
 
@@ -76,7 +70,7 @@ namespace PierwszyProjekt
                     throw new Exception("Nie wystarczające parametry do wykonania akcji!");
                 }
 
-                Console.Write("Elements: " + ValueA + ", " +  ValueN + ", " + ValueL + "\n");
+                Console.Write("Elements: " + ValueA + ", " + ValueN + ", " + ValueL + "\n");
                 oryginalBitmap = baseImage.Bitmap;
 
                 //DoRandonTransform
@@ -90,7 +84,7 @@ namespace PierwszyProjekt
                 Bitmap outBitmap = sinogram.OutPutImage.Bitmap;
                 pictureBox3.Image = outBitmap;
                 this.pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
-   
+
                 //Błąd średniokwadratowy
                 double MSE = 0.0;
                 for (int i = 0; i < baseImage.Bitmap.Height; ++i)
@@ -101,14 +95,14 @@ namespace PierwszyProjekt
                             outBitmap.GetPixel(i, j).ToArgb()), 2);
                     }
                 }
-                label8.Text = (Math.Sqrt(MSE/(baseImage.Bitmap.Width * baseImage.Bitmap.Height))).ToString();
+                label8.Text = (Math.Sqrt(MSE / (baseImage.Bitmap.Width * baseImage.Bitmap.Height))).ToString();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("There was an error opening the bitmap." + "Please check the path." + ex);
             }
         }
-     
+
         //przycisk ułatwia wybór pliku z poziomu eksploratora plików
         private void button3_Click(object sender, EventArgs e)
         {
@@ -132,7 +126,7 @@ namespace PierwszyProjekt
             {
                 DetectorsGenerator dg = new DetectorsGenerator(20, 60, c, em);
                 systems.Add(new EmiterDetectorsSystem(em, dg.Detectors));
-                
+
                 #region debug console
                 //int[,] debugTab = new int[max + 1, max + 1];
                 //for (int i = 0; i < max + 1; i++)
@@ -172,7 +166,7 @@ namespace PierwszyProjekt
             //label8.Text = "<>" + trackBar1.Value + "<>";
             trackbar = trackBar1.Value;
             this.button2_Click(sender, e);
-            
+
         }
     }
 }

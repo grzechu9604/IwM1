@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PierwszyProjekt.Algorithms
 {
-     public static class Filter
+    public static class Filter
     {
         public static Bitmap MedianFilter(this Bitmap sourceBitmap,
                                             int matrixSize,

@@ -1,8 +1,6 @@
 ﻿using PierwszyProjekt.DataTypes;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 
 namespace PierwszyProjekt.Algorithms
 {
@@ -43,7 +41,7 @@ namespace PierwszyProjekt.Algorithms
                 createdDetectors++;
                 index += stepInPoints;
             }
-            
+
             return detectors;
         }
 

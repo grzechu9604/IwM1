@@ -52,7 +52,6 @@
     <Compile Include="Algorithms\LineCreator.cs" />
     <Compile Include="Algorithms\CircleCreator.cs" />
     <Compile Include="Algorithms\LineSummer.cs" />
-    <Compile Include="Algorithms\PairsPointCreator.cs" />
     <Compile Include="DataTypes\Circle.cs" />
     <Compile Include="DataTypes\Detector.cs" />
     <Compile Include="DataTypes\Emiter.cs" />
