@@ -87,15 +87,15 @@ namespace PierwszyProjekt
 
                 //Błąd średniokwadratowy
                 double MSE = 0.0;
-                for (int i = 0; i < baseImage.Bitmap.Height; ++i)
+                for (int i = 0; i < baseImage.Bitmap.Height; i++)
                 {
-                    for (int j = 0; j < baseImage.Bitmap.Width; ++j)
+                    for (int j = 0; j < baseImage.Bitmap.Width; j++)
                     {
-                        MSE += Math.Pow((baseImage.Bitmap.GetPixel(i, j).ToArgb() -
-                            outBitmap.GetPixel(i, j).ToArgb()), 2);
+                        MSE += Math.Pow((baseImage.Bitmap.GetPixel(i, j).R + baseImage.Bitmap.GetPixel(i, j).G + baseImage.Bitmap.GetPixel(i, j).B 
+                            - outBitmap.GetPixel(i, j).R - outBitmap.GetPixel(i, j).G - outBitmap.GetPixel(i, j).B) / 3, 2);
                     }
                 }
-                label8.Text = (Math.Sqrt(MSE / (baseImage.Bitmap.Width * baseImage.Bitmap.Height))).ToString();
+                label8.Text = ((MSE / (baseImage.Bitmap.Width * baseImage.Bitmap.Height))).ToString();
             }
             catch (Exception ex)
             {
