@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace PierwszyProjekt.Algorithms
 {
-    public class EmiterGenerator
+    public class EmiterGenerator : IEmiterGenerator
     {
         public EmiterGenerator(double alfa, Circle circle)
         {
             Emiters = GenerateEmiters(360 / alfa, circle);
         }
 
-        public List<Emiter> Emiters { private set; get; }
+        public List<Emiter> Emiters {  set; get; }
 
         private List<Emiter> GenerateEmiters(double amountOfEmiters, Circle circle)
         {

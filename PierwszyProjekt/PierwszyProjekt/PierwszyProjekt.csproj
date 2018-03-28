@@ -49,9 +49,13 @@
     <Compile Include="Algorithms\DetectorsGenerator.cs" />
     <Compile Include="Algorithms\EmiterGenerator.cs" />
     <Compile Include="Algorithms\Filter.cs" />
+    <Compile Include="Algorithms\IDetectorsGenerator.cs" />
+    <Compile Include="Algorithms\IEmiterGenerator.cs" />
     <Compile Include="Algorithms\LineCreator.cs" />
     <Compile Include="Algorithms\CircleCreator.cs" />
     <Compile Include="Algorithms\LineSummer.cs" />
+    <Compile Include="Algorithms\SineDetectorsGenerator.cs" />
+    <Compile Include="Algorithms\SineEmiterGenerator.cs" />
     <Compile Include="DataTypes\Circle.cs" />
     <Compile Include="DataTypes\Detector.cs" />
     <Compile Include="DataTypes\Emiter.cs" />

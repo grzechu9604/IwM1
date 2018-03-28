@@ -9,6 +9,11 @@ namespace PierwszyProjekt.DataTypes
             Point = point;
         }
 
+        public Emiter(int x, int y)
+        {
+            Point = new Point(x, y);
+        }
+
         public Point Point { get; private set; }
     }
 }

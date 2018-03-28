@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace PierwszyProjekt.Algorithms
 {
-    public class DetectorsGenerator
+    public class DetectorsGenerator : IDetectorsGenerator
     {
         /// <summary>
         /// Use only for unit tests!!!
@@ -15,7 +15,7 @@ namespace PierwszyProjekt.Algorithms
         {
             Detectors = GenerateDetectors(amountOfDetectors, angularSpread, circle, emiter);
         }
-
+        
         public List<Detector> Detectors { private set; get; }
 
         private List<Detector> GenerateDetectors(int amountOfDetectors, int angularSpread, Circle circle, Emiter emiter)
