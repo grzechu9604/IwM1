@@ -1,9 +1,5 @@
-﻿using System;
+﻿using PierwszyProjekt.DataTypes;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PierwszyProjekt.DataTypes;
 using System.Drawing;
 
 namespace PierwszyProjekt.Algorithms
