@@ -1,9 +1,6 @@
-﻿using System;
+﻿using PierwszyProjekt.DataTypes;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PierwszyProjekt.DataTypes;
 using System.Drawing;
 
 namespace PierwszyProjekt.Algorithms
@@ -20,7 +17,7 @@ namespace PierwszyProjekt.Algorithms
         private List<Detector> GenerateDetectors(int amountOfDetectors, double angularSpread, Emiter emiter, int radius, Point centerOfTheCircle)
         {
             List<Detector> detectors = new List<Detector>();
-            double angle = emiter.Angle + Math.PI - CircleUtil.DegreesToRadians(angularSpread);
+            double angle = emiter.Angle + Math.PI - CircleUtil.DegreesToRadians(angularSpread) / 2;
             double step = CircleUtil.DegreesToRadians(angularSpread / amountOfDetectors);
 
             for (int i = 0; i < amountOfDetectors; i++)
