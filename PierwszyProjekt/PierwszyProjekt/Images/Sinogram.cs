@@ -13,7 +13,7 @@ namespace PierwszyProjekt.Images
         public long IterationAmount { set; get; }
         private double Alfa { set; get; }
 
-        public Sinogram(BaseImage image, int n, double a, int l)
+        public Sinogram(BaseImage image, int n, double a, int l, bool useKeyPoints)
         {
             OutPutImage = new BaseImage(image.Bitmap.Width, image.Bitmap.Height);
             OutPutImage.SumOfAverageTable = new double[image.Bitmap.Width, image.Bitmap.Height];
@@ -28,16 +28,22 @@ namespace PierwszyProjekt.Images
                 }
             }
 
-            DoRandonTransform(image, n, a, l);
+            DoRandonTransform(image, n, a, l, useKeyPoints);
         }
 
 
 
-        private void DoRandonTransform(BaseImage image, int n, double a, int l)
+        private void DoRandonTransform(BaseImage image, int n, double a, int l, bool useKeyPoints)
         {
-            CircleCreator cc = new CircleCreator(image.Bitmap.Width - 1, image.Bitmap.Height - 1);
-            Circle circle = new Circle(image.Bitmap.Width - 1, image.Bitmap.Height - 1, image.Bitmap.Width / 2, cc.PointsOnCircle.ToArray());
-            EmiterGenerator eg = new EmiterGenerator(a, circle);
+            int maxX = image.Bitmap.Width - 1;
+            int maxY = image.Bitmap.Height - 1;
+            int radius = image.Bitmap.Width / 2 - 1;
+
+            CircleCreator cc = new CircleCreator(maxX, maxY);
+            Circle circle = new Circle(maxX, maxY, radius, cc.PointsOnCircle.ToArray());
+
+            IEmiterGenerator eg = CreateEmiterGenerator(useKeyPoints, a, circle, maxX, maxY, radius);
+               
             List<EmiterDetectorsSystem> systems = new List<EmiterDetectorsSystem>();
 
             BitmapToBlackAndWhiteConverter blackBitmap = new BitmapToBlackAndWhiteConverter(image.Bitmap);
@@ -53,7 +59,7 @@ namespace PierwszyProjekt.Images
             int emiterIndex = 0;
             eg.Emiters.ForEach(e =>
             {
-                DetectorsGenerator dg = new DetectorsGenerator(n, l, circle, e);
+                IDetectorsGenerator dg = CreateDetectorGenerator(useKeyPoints, n, l, circle, e, radius);
                 EmiterDetectorsSystem newSystem = new EmiterDetectorsSystem(e, dg.Detectors);
                 systems.Add(newSystem);
 
@@ -89,6 +95,37 @@ namespace PierwszyProjekt.Images
             GenerateBitmap(eg.Emiters.ToArray().Length, n + 1, averageTable);
 
             Console.Write("DoRandonTransform --> DONE\n");
+        }
+
+        private IEmiterGenerator CreateEmiterGenerator(bool useKeyPoints, double alfa, Circle circle, int maxX, int maxY, int radius)
+        {
+            IEmiterGenerator eg;
+            if (useKeyPoints)
+            {
+                eg = new EmiterGenerator(alfa, circle);
+            }
+            else
+            {
+                eg = new SineEmiterGenerator(alfa, radius, maxX, maxY, circle.CenterOfTheCircle);
+            }
+
+            return eg;
+        }
+
+        private IDetectorsGenerator CreateDetectorGenerator(bool useKeyPoints, int amountOfDetectors, double angularSpread, Circle circle, Emiter emiter, int radius)
+        {
+            IDetectorsGenerator dg;
+
+            if (useKeyPoints)
+            {
+                dg = new DetectorsGenerator(amountOfDetectors, angularSpread, circle, emiter);
+            }
+            else
+            {
+                dg = new SineDetectorsGenerator(amountOfDetectors, angularSpread, emiter, radius, circle.CenterOfTheCircle);
+            }
+
+            return dg;
         }
     }
 }

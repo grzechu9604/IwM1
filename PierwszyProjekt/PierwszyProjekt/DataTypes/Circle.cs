@@ -6,6 +6,7 @@ namespace PierwszyProjekt.DataTypes
     public class Circle
     {
         public Point[] PointsOnACircle { private set; get; }
+        public Point CenterOfTheCircle { private set; get; }
         public int Radius { private set; get; }
         public int AmountOfPoints { private set; get; }
         public int MaxX { private set; get; }
@@ -28,6 +29,7 @@ namespace PierwszyProjekt.DataTypes
 
         public Circle(int maxX, int maxY, int radius, Point[] pointsOnACircle)
         {
+            CenterOfTheCircle = new Point(maxX / 2, maxY / 2);
             Radius = radius;
             PointsOnACircle = pointsOnACircle;
             AmountOfPoints = PointsOnACircle.Length;

@@ -74,7 +74,7 @@ namespace PierwszyProjekt
                 oryginalBitmap = baseImage.Bitmap;
 
                 //DoRandonTransform
-                sinogram = new Sinogram(baseImage, ValueN, ValueA, ValueL);
+                sinogram = new Sinogram(baseImage, ValueN, ValueA, ValueL, !useSinus.Checked);
                 sinogram.Display(this.pictureBox2);
 
                 //DoReversedRandonTransform

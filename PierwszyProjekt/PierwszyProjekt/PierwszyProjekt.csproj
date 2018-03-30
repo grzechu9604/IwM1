@@ -54,6 +54,7 @@
     <Compile Include="Algorithms\LineCreator.cs" />
     <Compile Include="Algorithms\CircleCreator.cs" />
     <Compile Include="Algorithms\LineSummer.cs" />
+    <Compile Include="Algorithms\CircleUtil.cs" />
     <Compile Include="Algorithms\SineDetectorsGenerator.cs" />
     <Compile Include="Algorithms\SineEmiterGenerator.cs" />
     <Compile Include="DataTypes\Circle.cs" />

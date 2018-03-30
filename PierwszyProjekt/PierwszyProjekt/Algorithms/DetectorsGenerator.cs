@@ -1,4 +1,5 @@
 ﻿using PierwszyProjekt.DataTypes;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -11,18 +12,18 @@ namespace PierwszyProjekt.Algorithms
         /// </summary>
         public DetectorsGenerator() { }
 
-        public DetectorsGenerator(int amountOfDetectors, int angularSpread, Circle circle, Emiter emiter)
+        public DetectorsGenerator(int amountOfDetectors, double angularSpread, Circle circle, Emiter emiter)
         {
             Detectors = GenerateDetectors(amountOfDetectors, angularSpread, circle, emiter);
         }
         
         public List<Detector> Detectors { private set; get; }
 
-        private List<Detector> GenerateDetectors(int amountOfDetectors, int angularSpread, Circle circle, Emiter emiter)
+        private List<Detector> GenerateDetectors(int amountOfDetectors, double angularSpread, Circle circle, Emiter emiter)
         {
             List<Detector> detectors = new List<Detector>();
 
-            int amountOfPossibleDetectorsPoints = angularSpread * circle.AmountOfPoints / 360;
+            int amountOfPossibleDetectorsPoints = Convert.ToInt32(angularSpread * circle.AmountOfPoints / 360);
             int stepInPoints = amountOfPossibleDetectorsPoints / amountOfDetectors;
 
             if (stepInPoints == 0)

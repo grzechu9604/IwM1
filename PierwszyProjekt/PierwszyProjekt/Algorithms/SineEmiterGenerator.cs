@@ -10,30 +10,23 @@ namespace PierwszyProjekt.Algorithms
 {
     public class SineEmiterGenerator : IEmiterGenerator
     {
-        public SineEmiterGenerator(double alfa, int radius, int maxX, int maxY)
+        public SineEmiterGenerator(double alfa, int radius, int maxX, int maxY, Point centerOfCircle)
         {
-            Emiters = GenerateEmiters(alfa, radius, maxX, maxY);
+            Emiters = GenerateEmiters(alfa, radius, maxX, maxY, centerOfCircle);
         }
 
-        private List<Emiter> GenerateEmiters(double alfa, int radius, int maxX, int maxY)
+        private List<Emiter> GenerateEmiters(double alfa, int radius, int maxX, int maxY, Point centerOfCircle)
         {
             List<Emiter> generatedEmiters = new List<Emiter>();
-
-            Point centerOfCircle = new Point(maxX / 2, maxY / 2);
-
+         
             for (double i = 0; i < 360; i+=alfa)
             {
-                int x = Convert.ToInt32(centerOfCircle.X + radius * Math.Cos(DegreesToRadians(i)));
-                int y = Convert.ToInt32(centerOfCircle.Y + radius * Math.Sin(DegreesToRadians(i)));
-                generatedEmiters.Add(new Emiter(x, y));
+                double angleInRadians = CircleUtil.DegreesToRadians(i);
+                Point newEmiterPoint = CircleUtil.GeneratePointOnArc(centerOfCircle, radius, angleInRadians);
+                generatedEmiters.Add(new Emiter(newEmiterPoint, angleInRadians));
             }
 
             return generatedEmiters;
-        }
-
-        private double DegreesToRadians(double angleInDegrees)
-        {
-            return Math.PI / 180 * angleInDegrees;
         }
 
         public List<Emiter> Emiters { private set; get; }
