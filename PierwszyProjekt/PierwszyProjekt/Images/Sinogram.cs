@@ -9,6 +9,7 @@ namespace PierwszyProjekt.Images
     {
         private double[,] averageTable;
         public BaseImage OutPutImage { private set; get; }
+        public double[,] sinogramFiltered ;
 
         public long IterationAmount { set; get; }
         private double Alfa { set; get; }
@@ -68,12 +69,14 @@ namespace PierwszyProjekt.Images
                     {
                         LineCreator lc = new LineCreator(e.Point, detector.Point);
                         LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
-
-                        lc.Line.ForEach(pointOnLine =>
+                        if (!Form1.checkBoxState)
                         {
-                            OutPutImage.SumOfAverageTable[pointOnLine.X, pointOnLine.Y] += summer.Average;
-                            OutPutImage.CountOfAverageTable[pointOnLine.X, pointOnLine.Y] += 1;
-                        });
+                            lc.Line.ForEach(pointOnLine =>
+                            {
+                                OutPutImage.SumOfAverageTable[pointOnLine.X, pointOnLine.Y] += summer.Average;
+                                OutPutImage.CountOfAverageTable[pointOnLine.X, pointOnLine.Y] += 1;
+                            });
+                        }
 
                         averageTable[emiterIndex, detectorIndex++] = summer.Average;
 
@@ -88,13 +91,68 @@ namespace PierwszyProjekt.Images
                         }
                     });
                 emiterIndex++;
+
+
+
             });
 
+            if (Form1.checkBoxState)
+            {
+                    //OutPutImage zakomentowałem, żeby najpierw przefiltrować tablice avarageTable
+                    int aaa = eg.Emiters.ToArray().Length;
+                    int bbb = n + 1;
+                    sinogramFiltered = new double[aaa, bbb];
+                    for (int i = 0; i < aaa; i++)
+                    {
+                        for (int j = 0; j < bbb; j++)
+                        {
+                            for (int k = 0; k < bbb; k++)
+                            {
+                                sinogramFiltered[i, j] += fx(j, k) * averageTable[i, j];
+                            }
+                        }
+                    }
+
+                    //dalej to dla tych samych emiterów, dodaje przefiltrowaną wartość
+                    emiterIndex = 0;
+                    eg.Emiters.ForEach(e =>
+                    {
+                        IDetectorsGenerator dg = CreateDetectorGenerator(useKeyPoints, n, l, circle, e, radius);
+                        EmiterDetectorsSystem newSystem = new EmiterDetectorsSystem(e, dg.Detectors);
+                    //systems.Add(newSystem);
+
+                    int detectorIndex = 0;
+                        newSystem.Detectors.ForEach(detector =>
+                        {
+                            LineCreator lc = new LineCreator(e.Point, detector.Point);
+                            LineSummer summer = new LineSummer(lc.Line, blackBitmap.ConvertedTab);
+
+                            lc.Line.ForEach(pointOnLine =>
+                            {
+                                OutPutImage.SumOfAverageTable[pointOnLine.X, pointOnLine.Y] += sinogramFiltered[emiterIndex, detectorIndex];
+                                OutPutImage.CountOfAverageTable[pointOnLine.X, pointOnLine.Y] += 1;
+                            });
+                            detectorIndex++;
+
+                        });
+                        emiterIndex++;
+                    });
+
+            }
 
             NormalizeTab(eg.Emiters.ToArray().Length, n + 1, maxAverage, averageTable, minAverage);
             GenerateBitmap(eg.Emiters.ToArray().Length, n + 1, averageTable);
 
             Console.Write("DoRandonTransform --> DONE\n");
+        }
+
+        //funkcja do filtrowania
+        private double fx(int id, int id2)
+        {
+            int temp = Math.Abs(id - id2);
+            if (temp == 0) return 1;
+            if (temp % 2 == 0) return 0;
+            return (-4 / (Math.Pow(Math.PI, 2))) / (temp * temp);
         }
 
         private IEmiterGenerator CreateEmiterGenerator(bool useKeyPoints, double alfa, Circle circle, int maxX, int maxY, int radius)
