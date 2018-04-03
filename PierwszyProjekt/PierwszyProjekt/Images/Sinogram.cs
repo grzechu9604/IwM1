@@ -108,7 +108,7 @@ namespace PierwszyProjekt.Images
                         {
                             for (int k = 0; k < bbb; k++)
                             {
-                                sinogramFiltered[i, j] += fx(j, k) * averageTable[i, j];
+                                sinogramFiltered[i, j] += fx(j, k) * averageTable[i, k];
                             }
                         }
                     }
