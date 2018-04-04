@@ -15,6 +15,7 @@ namespace PierwszyProjekt
         public int ValueN;
         public int ValueL;
         public static int trackbar;
+        public static bool checkBoxState;
         BaseImage baseImage;
         Sinogram sinogram;
         public static Bitmap oryginalBitmap;
@@ -79,6 +80,7 @@ namespace PierwszyProjekt
 
                 //DoReversedRandonTransform
                 sinogram.OutPutImage.DoReversedRandonTransform();
+                //sinogram.OutPutImage.FiltredDoReversedRandonTransform();
 
                 //Bitmap outBitmap = Filter.MedianFilter(sinogram.OutPutImage.Bitmap, 3);
                 Bitmap outBitmap = sinogram.OutPutImage.Bitmap;
@@ -167,6 +169,11 @@ namespace PierwszyProjekt
             trackbar = trackBar1.Value;
             this.button2_Click(sender, e);
 
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxState = checkBox1.Checked;
         }
     }
 }
