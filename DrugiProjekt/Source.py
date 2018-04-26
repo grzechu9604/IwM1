@@ -13,10 +13,8 @@ def generate_fragment(image, x, y, k):
     crop_img = image.crop(crop_mask)
     return crop_img
 
-
 def convert_image_to_array(img):
     return numpy.asarray(img.convert("L"))
-
 
 def calculate_hu_moments(tab):
     return cv2.HuMoments(cv2.moments(tab)).flatten()
@@ -25,13 +23,21 @@ def calculate_hu_moments(tab):
 def get_middle_pixel_color(imge, size):
     return imge.load()[size / 2, size / 2]
 
+def get_variation_color(img):
+    return 1
 
-def generate_parameters_for_neural_network(fragment, size):
+def generate_parameters_for_knn(fragment, size):
     image_array = convert_image_to_array(fragment)
     moments = calculate_hu_moments(image_array)
     middle_pixel_color = get_middle_pixel_color(fragment, size)
+    variation = get_variation_color(fragment)
 
-    params = numpy.concatenate((moments,middle_pixel_color), axis=0)
+    params = [
+        {"id":1,"name":"moments","value":moments},
+        {"id": 2, "name": "middle_pixel_color", "value": middle_pixel_color},
+        {"id": 3, "name": "variation", "value": variation}
+    ]
+    #params = numpy.concatenate([moments], axis=0)
     print(params)
 
 
@@ -55,11 +61,11 @@ def fun():
     image = ['healthy/01_h.jpg']
     obrazy = []
     for i in image:
-        plt.subplot(1, 2, 1)
+        plt.subplot(3, 1, 1)
         plt.axis('off')
         io.imshow(data.imread(i, as_grey=False))
 
-        plt.subplot(1, 2, 2)
+        plt.subplot(3, 1, 2)
         plt.axis('off')
         grey = data.imread(i, as_grey=True)
         dx = ndimage.sobel(grey, 1)
@@ -70,6 +76,11 @@ def fun():
         erosion = cv2.erode(mag, kernel, iterations=1)
         dilation = cv2.dilate(erosion, kernel, iterations=1)
         io.imshow(dilation)
+
+        plt.subplot(3, 1, 3)
+        plt.axis('off')
+        io.imshow(data.imread(i, as_grey=True))
+
         plt.show()
 
 
@@ -81,7 +92,7 @@ def main():
     y = 500
     k = 9
     fragment = generate_fragment(img, x, y, k)
-    generate_parameters_for_neural_network(fragment, k)
+    generate_parameters_for_knn(fragment, k)
 
 
 main()
