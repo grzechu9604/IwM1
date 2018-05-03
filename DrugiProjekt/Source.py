@@ -43,7 +43,11 @@ def generate_parameters_for_knn(fragment, size):
     params = [
         {"id": 1, "name": "moments", "value": moments},
         {"id": 2, "name": "middle_pixel_color", "value": middle_pixel_color},
-        {"id": 3, "name": "variation", "value": variation}
+        {"id": 3, "name": "variation", "value": variation},
+        {"id": 4, "name": "brightness", "value": brightness},
+        {"id": 5, "name": "edges", "value": edges},
+        {"id": 6, "name": "variation_of_vertiacal_line", "value": variation_of_vertiacal_line},
+        {"id": 7, "name": "variation_of_horizontal_line", "value": variation_of_horizontal_line}
     ]
     # params = numpy.concatenate([moments], axis=0)
     print(params)
