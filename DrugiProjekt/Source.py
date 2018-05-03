@@ -35,6 +35,10 @@ def generate_parameters_for_knn(fragment, size):
     moments = calculate_hu_moments(image_array)
     middle_pixel_color = get_middle_pixel_color(fragment, size)
     variation = get_variation_color(fragment)
+    brightness = 0  # TODO wyliczenie jasnosci obrazu
+    edges = 0  # TODO wykrycie krawedzi przy uzyciu canny z cv
+    variation_of_vertiacal_line = 0  # TODO wyliczenie wariancji dla pasa pionowego na srodku obrazu
+    variation_of_horizontal_line = 0  # TODO wyliczenie wariancji dla pasa poziomego na srodku obrazu
 
     params = [
         {"id": 1, "name": "moments", "value": moments},
