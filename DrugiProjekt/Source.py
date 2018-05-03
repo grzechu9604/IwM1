@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import matplotlib.pyplot as plt
-from skimage import data, io, feature
+from skimage import data, io
 import numpy
 import cv2
 from scipy import ndimage
@@ -13,8 +13,10 @@ def generate_fragment(image, x, y, k):
     crop_img = image.crop(crop_mask)
     return crop_img
 
+
 def convert_image_to_array(img):
     return numpy.asarray(img.convert("L"))
+
 
 def calculate_hu_moments(tab):
     return cv2.HuMoments(cv2.moments(tab)).flatten()
@@ -23,8 +25,10 @@ def calculate_hu_moments(tab):
 def get_middle_pixel_color(imge, size):
     return imge.load()[size / 2, size / 2]
 
+
 def get_variation_color(img):
-    return 1
+    return numpy.var(convert_image_to_array(img))
+
 
 def generate_parameters_for_knn(fragment, size):
     image_array = convert_image_to_array(fragment)
@@ -33,11 +37,11 @@ def generate_parameters_for_knn(fragment, size):
     variation = get_variation_color(fragment)
 
     params = [
-        {"id":1,"name":"moments","value":moments},
+        {"id": 1, "name": "moments", "value": moments},
         {"id": 2, "name": "middle_pixel_color", "value": middle_pixel_color},
         {"id": 3, "name": "variation", "value": variation}
     ]
-    #params = numpy.concatenate([moments], axis=0)
+    # params = numpy.concatenate([moments], axis=0)
     print(params)
 
 
@@ -51,7 +55,7 @@ def generate():
             value_max = max(pix[y - 1, x - 1][0], pix[y - 1, x][0], pix[y - 1, x + 1][0], pix[y, x - 1][0],
                             pix[y, x][0], pix[y, x + 1][0], pix[y + 1, x - 1][0], pix[y + 1, x][0],
                             pix[y + 1, x + 1][0])
-            if (value_max == pix[y, x][0]):
+            if value_max == pix[y, x][0]:
                 pix[y, x] = (255, 255, 255)
     im.save("01_h.png")
 
@@ -59,7 +63,6 @@ def generate():
 def fun():
     plt.figure(figsize=(16, 16))
     image = ['healthy/01_h.jpg']
-    obrazy = []
     for i in image:
         plt.subplot(3, 1, 1)
         plt.axis('off')
