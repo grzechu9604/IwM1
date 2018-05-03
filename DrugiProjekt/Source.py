@@ -8,10 +8,22 @@ from scipy import ndimage
 from PIL import Image
 
 
-def generate_fragment(image, x, y, k):
-    crop_mask = (x, y, x + k, y + k)
+def generate_horizontal_line(image, line_size_x):
+    return generate_line(image, 0, image.height / 2 - line_size_x / 2, image.width, image.height / 2 + line_size_x / 2)
+
+
+def generate_vartical_line(image, line_size_y):
+    return generate_line(image, image.width / 2 - line_size_y / 2, 0, image.width / 2 + line_size_y / 2, image.height)
+
+
+def generate_line(image, start_x, start_y, end_x, end_y):
+    crop_mask = (start_x, start_y, end_x, end_y)
     crop_img = image.crop(crop_mask)
     return crop_img
+
+
+def generate_fragment(image, x, y, k):
+    return generate_line(image, x, y, x + k, y + k)
 
 
 def convert_image_to_array(img):
@@ -37,8 +49,8 @@ def generate_parameters_for_knn(fragment, size):
     variation = get_variation_color(fragment)
     brightness = 0  # TODO wyliczenie jasnosci obrazu
     edges = 0  # TODO wykrycie krawedzi przy uzyciu canny z cv
-    variation_of_vertiacal_line = 0  # TODO wyliczenie wariancji dla pasa pionowego na srodku obrazu
-    variation_of_horizontal_line = 0  # TODO wyliczenie wariancji dla pasa poziomego na srodku obrazu
+    variation_of_vertiacal_line = get_variation_color(generate_vartical_line(fragment, 4))
+    variation_of_horizontal_line = get_variation_color(generate_horizontal_line(fragment, 4))
 
     params = [
         {"id": 1, "name": "moments", "value": moments},
