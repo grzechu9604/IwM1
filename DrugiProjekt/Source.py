@@ -123,10 +123,24 @@ def fun():
         plt.show()
 
 
+def create_path_for_image(number):
+    return 'healthy/0' + str(number) + '_h.jpg' if number < 10 else 'healthy/' + str(number) + '_h.jpg'
+
+
+def generate_images_paths(amount):
+    images_paths = []
+    for i in range(1,16):
+        images_paths = images_paths + [create_path_for_image(i)]
+    return images_paths
+
+
 def main():
     # fun()
     # generate()
-    img = Image.open('healthy/01_h.jpg')
+
+    images_paths = generate_images_paths(16)
+
+    img = Image.open(images_paths[0])
     x = 100
     y = 500
     k = 9
