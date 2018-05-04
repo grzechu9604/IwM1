@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import random
 
 import matplotlib.pyplot as plt
 from skimage import data, io
@@ -24,6 +25,10 @@ def generate_line(image, start_x, start_y, end_x, end_y):
 
 def generate_fragment(image, x, y, k):
     return generate_line(image, x, y, x + k, y + k)
+
+
+def generate_fragment_using_middle_point(image, x, y, k):
+    return generate_fragment(image, x - k / 2, y - k / 2, k)
 
 
 def convert_image_to_array(img):
@@ -62,7 +67,7 @@ def generate_parameters_for_knn(fragment, size):
         {"id": 7, "name": "variation_of_horizontal_line", "value": variation_of_horizontal_line}
     ]
 
-    generate_attributes_vector(params, 7)
+    return generate_attributes_vector(params, 7)
 
 
 def add_value_to_array(array, value):
@@ -78,7 +83,7 @@ def generate_attributes_vector(params, params_amount):
         else:
             array = add_value_to_array(array, params[i]["value"])
 
-    print(array)
+    return array
 
 
 def generate():
@@ -150,19 +155,36 @@ def filter_images(images):
     return [filter_image(image) for image in images]
 
 
+def choose_random_image(images):
+    return random.choice(images)
+
+
+def choose_random_pixel_coordinates(image, size_of_fragment):
+    return random.randint(size_of_fragment, image.width - size_of_fragment), random.randint(size_of_fragment, image.height - size_of_fragment)
+
+
 def main():
-    # fun()
-    # generate()
+    seed = 10
+    amount_of_learning_point = 10
+    size_of_fragment = 9
+
+    random.seed(seed)
 
     images_paths = generate_images_paths(1, 16)
     images = generate_images_array(images_paths)
     filtered_images = filter_images(images)
 
-    x = 100
-    y = 500
-    k = 9
-    fragment = generate_fragment(filtered_images[0], x, y, k)
-    generate_parameters_for_knn(fragment, k)
+    parameters_to_learn = []
+    answers_to_learn = []
+
+    for i in range(amount_of_learning_point):
+        image = choose_random_image(filtered_images)
+        x, y = choose_random_pixel_coordinates(image, size_of_fragment)
+        fragment = generate_fragment_using_middle_point(image, x, y, size_of_fragment)
+        parameters = generate_parameters_for_knn(fragment, size_of_fragment)
+        parameters_to_learn = parameters_to_learn + [parameters]
+
+    print(parameters_to_learn)
 
 
 main()
