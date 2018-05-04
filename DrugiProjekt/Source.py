@@ -7,6 +7,7 @@ import numpy
 import cv2
 from scipy import ndimage
 from PIL import Image
+from sklearn.neighbors import KNeighborsClassifier
 
 
 def generate_horizontal_line(image, line_size_x):
@@ -171,7 +172,8 @@ def choose_random_image(images):
 
 
 def choose_random_pixel_coordinates(image, size_of_fragment):
-    return random.randint(size_of_fragment, image.width - size_of_fragment), random.randint(size_of_fragment, image.height - size_of_fragment)
+    return random.randint(size_of_fragment, image.width - size_of_fragment), \
+           random.randint(size_of_fragment, image.height - size_of_fragment)
 
 
 def normalize_parameters_to_learn(parameters_to_learn):
@@ -196,6 +198,7 @@ def main():
     size_of_fragment = 9
     start_from = 1
     end_on = 16
+    amount_of_neighbors = 6
 
     random.seed(seed)
 
@@ -222,6 +225,11 @@ def main():
 
     normalized_parameters_to_learn = normalize_parameters_to_learn(parameters_to_learn)
 
+    knn = KNeighborsClassifier(n_neighbors=amount_of_neighbors)
+    knn.fit(normalized_parameters_to_learn, answers_to_learn)
+
+    predict = knn.predict([normalized_parameters_to_learn[0]])
+    print(predict)
 
 
 main()
