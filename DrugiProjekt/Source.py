@@ -141,17 +141,27 @@ def generate_images_array(images_paths):
     return images
 
 
+def filter_image(image):
+    # TODO filtrowanie obrazu jak w fun
+    return image
+
+
+def filter_images(images):
+    return [filter_image(image) for image in images]
+
+
 def main():
     # fun()
     # generate()
 
     images_paths = generate_images_paths(1, 16)
     images = generate_images_array(images_paths)
+    filtered_images = filter_images(images)
 
     x = 100
     y = 500
     k = 9
-    fragment = generate_fragment(images[0], x, y, k)
+    fragment = generate_fragment(filtered_images[0], x, y, k)
     generate_parameters_for_knn(fragment, k)
 
 
