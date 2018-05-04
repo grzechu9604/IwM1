@@ -127,9 +127,9 @@ def create_path_for_image(number):
     return 'healthy/0' + str(number) + '_h.jpg' if number < 10 else 'healthy/' + str(number) + '_h.jpg'
 
 
-def generate_images_paths(amount):
+def generate_images_paths(start_from, end_on):
     images_paths = []
-    for i in range(1,16):
+    for i in range(start_from, end_on):
         images_paths = images_paths + [create_path_for_image(i)]
     return images_paths
 
@@ -138,7 +138,7 @@ def main():
     # fun()
     # generate()
 
-    images_paths = generate_images_paths(16)
+    images_paths = generate_images_paths(1, 16)
 
     img = Image.open(images_paths[0])
     x = 100
