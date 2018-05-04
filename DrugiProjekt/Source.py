@@ -12,7 +12,7 @@ def generate_horizontal_line(image, line_size_x):
     return generate_line(image, 0, image.height / 2 - line_size_x / 2, image.width, image.height / 2 + line_size_x / 2)
 
 
-def generate_vartical_line(image, line_size_y):
+def generate_vertical_line(image, line_size_y):
     return generate_line(image, image.width / 2 - line_size_y / 2, 0, image.width / 2 + line_size_y / 2, image.height)
 
 
@@ -49,7 +49,7 @@ def generate_parameters_for_knn(fragment, size):
     variation = get_variation_color(fragment)
     brightness = 0  # TODO wyliczenie jasnosci obrazu
     edges = 0  # TODO wykrycie krawedzi przy uzyciu canny z cv
-    variation_of_vertiacal_line = get_variation_color(generate_vartical_line(fragment, 4))
+    variation_of_vertical_line = get_variation_color(generate_vertical_line(fragment, 4))
     variation_of_horizontal_line = get_variation_color(generate_horizontal_line(fragment, 4))
 
     params = [
@@ -58,11 +58,10 @@ def generate_parameters_for_knn(fragment, size):
         {"id": 3, "name": "variation", "value": variation},
         {"id": 4, "name": "brightness", "value": brightness},
         {"id": 5, "name": "edges", "value": edges},
-        {"id": 6, "name": "variation_of_vertiacal_line", "value": variation_of_vertiacal_line},
+        {"id": 6, "name": "variation_of_vertical_line", "value": variation_of_vertical_line},
         {"id": 7, "name": "variation_of_horizontal_line", "value": variation_of_horizontal_line}
     ]
-    # params = numpy.concatenate([moments], axis=0)
-    print(params)
+
     generate_attributes_vector(params, 7)
 
 
