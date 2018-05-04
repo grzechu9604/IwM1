@@ -128,14 +128,14 @@ def fun():
         plt.show()
 
 
-def create_path_for_image(number):
+def create_path_for_input_image(number):
     return 'healthy/0' + str(number) + '_h.jpg' if number < 10 else 'healthy/' + str(number) + '_h.jpg'
 
 
-def generate_images_paths(start_from, end_on):
+def generate_input_images_paths(start_from, end_on):
     images_paths = []
     for i in range(start_from, end_on):
-        images_paths = images_paths + [create_path_for_image(i)]
+        images_paths = images_paths + [create_path_for_input_image(i)]
     return images_paths
 
 
@@ -144,6 +144,17 @@ def generate_images_array(images_paths):
     for image_path in images_paths:
         images = images + [Image.open(image_path)]
     return images
+
+
+def generate_path_for_correct_answer_image(number):
+    return 'healthy_correct/0' + str(number) + '_h.tif' if number < 10 else 'healthy_correct/' + str(number) + '_h.tif'
+
+
+def generate_correct_answers_paths(start_from, end_on):
+    images_paths = []
+    for i in range(start_from, end_on):
+        images_paths = images_paths + [generate_path_for_correct_answer_image(i)]
+    return images_paths
 
 
 def filter_image(image):
@@ -163,28 +174,54 @@ def choose_random_pixel_coordinates(image, size_of_fragment):
     return random.randint(size_of_fragment, image.width - size_of_fragment), random.randint(size_of_fragment, image.height - size_of_fragment)
 
 
+def normalize_parameters_to_learn(parameters_to_learn):
+    # TODO normalizacja parametrów
+    return parameters_to_learn
+
+
+def generate_array_of_tuples_of_images(input_images, correct_answers_images):
+    array_of_tuples = []
+    for i in range(len(input_images)):
+        array_of_tuples.append((input_images[i], correct_answers_images[i],))
+    return array_of_tuples
+
+
+def get_correct_answer_for_pixel(image, x, y):
+    return 1 if image.getpixel((x, y)) > 128 else 0
+
+
 def main():
     seed = 10
     amount_of_learning_point = 10
     size_of_fragment = 9
+    start_from = 1
+    end_on = 16
 
     random.seed(seed)
 
-    images_paths = generate_images_paths(1, 16)
-    images = generate_images_array(images_paths)
-    filtered_images = filter_images(images)
+    input_images_paths = generate_input_images_paths(start_from, end_on)
+    correct_answers_images_paths = generate_correct_answers_paths(start_from, end_on)
+    input_images = generate_images_array(input_images_paths)
+    correct_answers_images = generate_images_array(correct_answers_images_paths)
+    filtered_images = filter_images(input_images)
+    tuples_array = generate_array_of_tuples_of_images(filtered_images, correct_answers_images)
 
     parameters_to_learn = []
     answers_to_learn = []
 
     for i in range(amount_of_learning_point):
-        image = choose_random_image(filtered_images)
-        x, y = choose_random_pixel_coordinates(image, size_of_fragment)
-        fragment = generate_fragment_using_middle_point(image, x, y, size_of_fragment)
+        chosen_pictures = choose_random_image(tuples_array)
+        input_image = chosen_pictures[0]
+        correct_answer_image = chosen_pictures[1]
+        x, y = choose_random_pixel_coordinates(input_image, size_of_fragment)
+        fragment = generate_fragment_using_middle_point(input_image, x, y, size_of_fragment)
         parameters = generate_parameters_for_knn(fragment, size_of_fragment)
         parameters_to_learn = parameters_to_learn + [parameters]
+        correct_answer = get_correct_answer_for_pixel(correct_answer_image, x, y)
+        answers_to_learn.append(correct_answer)
 
-    print(parameters_to_learn)
+    normalized_parameters_to_learn = normalize_parameters_to_learn(parameters_to_learn)
+
 
 
 main()
