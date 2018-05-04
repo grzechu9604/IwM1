@@ -63,6 +63,23 @@ def generate_parameters_for_knn(fragment, size):
     ]
     # params = numpy.concatenate([moments], axis=0)
     print(params)
+    generate_attributes_vector(params, 7)
+
+
+def add_value_to_array(array, value):
+    return array + [value]
+
+
+def generate_attributes_vector(params, params_amount):
+    array = []
+    for i in range(params_amount):
+        if hasattr(params[i]["value"], "__len__"):
+            for value in params[i]["value"]:
+                array = add_value_to_array(array, value)
+        else:
+            array = add_value_to_array(array, params[i]["value"])
+
+    print(array)
 
 
 def generate():
