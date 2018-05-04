@@ -134,17 +134,24 @@ def generate_images_paths(start_from, end_on):
     return images_paths
 
 
+def generate_images_array(images_paths):
+    images = []
+    for image_path in images_paths:
+        images = images + [Image.open(image_path)]
+    return images
+
+
 def main():
     # fun()
     # generate()
 
     images_paths = generate_images_paths(1, 16)
+    images = generate_images_array(images_paths)
 
-    img = Image.open(images_paths[0])
     x = 100
     y = 500
     k = 9
-    fragment = generate_fragment(img, x, y, k)
+    fragment = generate_fragment(images[0], x, y, k)
     generate_parameters_for_knn(fragment, k)
 
 
