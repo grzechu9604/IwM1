@@ -176,9 +176,17 @@ def choose_random_pixel_coordinates(image, size_of_fragment):
            random.randint(size_of_fragment, image.height - size_of_fragment)
 
 
-def normalize_parameters_to_learn(parameters_to_learn):
-    # TODO normalizacja parametrów
-    return parameters_to_learn
+def normalize_vector_to_learn(vector_to_learn, max_values, min_values):
+    for i in range(len(vector_to_learn)):
+        if max_values[i] > 0:
+            vector_to_learn[i] = (vector_to_learn[i] - min_values[i]) / (max_values[i] - min_values[i])
+        else:
+            vector_to_learn[i] = 0
+    return vector_to_learn
+
+
+def normalize_parameters_to_learn(parameters_to_learn, max_values, min_values):
+    return [normalize_vector_to_learn(vector, max_values, min_values) for vector in parameters_to_learn]
 
 
 def generate_array_of_tuples_of_images(input_images, correct_answers_images):
@@ -190,6 +198,42 @@ def generate_array_of_tuples_of_images(input_images, correct_answers_images):
 
 def get_correct_answer_for_pixel(image, x, y):
     return 1 if image.getpixel((x, y)) > 128 else 0
+
+
+def get_image_to_predict(image, size_of_fragment):
+    return generate_line(image, size_of_fragment, size_of_fragment,
+                         image.width - size_of_fragment, image.height - size_of_fragment)
+
+
+def get_images_to_predict(images, size_of_fragment):
+    return [get_image_to_predict(image, size_of_fragment) for image in images]
+
+
+def predict_image(knn, image, size_of_fragment):
+    # TODO predykcja całego obrazu
+    return image
+
+
+def generate_new_max_values(old_max, vector):
+    if len(old_max) == 0:
+        return vector
+    else:
+        new_max = numpy.zeros(len(old_max))
+        for i in range(len(vector)):
+            new_max[i] = vector[i] if vector[i] >= old_max[i] else old_max[i]
+
+        return new_max
+
+
+def generate_new_min_values(old_min, vector):
+    if len(old_min) == 0:
+        return vector
+    else:
+        new_min = numpy.zeros(len(old_min))
+        for i in range(len(vector)):
+            new_min[i] = vector[i] if vector[i] <= old_min[i] else old_min[i]
+
+        return new_min
 
 
 def main():
@@ -204,13 +248,17 @@ def main():
 
     input_images_paths = generate_input_images_paths(start_from, end_on)
     correct_answers_images_paths = generate_correct_answers_paths(start_from, end_on)
+
     input_images = generate_images_array(input_images_paths)
     correct_answers_images = generate_images_array(correct_answers_images_paths)
     filtered_images = filter_images(input_images)
+
     tuples_array = generate_array_of_tuples_of_images(filtered_images, correct_answers_images)
 
     parameters_to_learn = []
     answers_to_learn = []
+    max_values = []
+    min_values = []
 
     for i in range(amount_of_learning_point):
         chosen_pictures = choose_random_image(tuples_array)
@@ -223,7 +271,10 @@ def main():
         correct_answer = get_correct_answer_for_pixel(correct_answer_image, x, y)
         answers_to_learn.append(correct_answer)
 
-    normalized_parameters_to_learn = normalize_parameters_to_learn(parameters_to_learn)
+        max_values = generate_new_max_values(max_values, parameters)
+        min_values = generate_new_min_values(min_values, parameters)
+
+    normalized_parameters_to_learn = normalize_parameters_to_learn(parameters_to_learn, max_values, min_values)
 
     knn = KNeighborsClassifier(n_neighbors=amount_of_neighbors)
     knn.fit(normalized_parameters_to_learn, answers_to_learn)
