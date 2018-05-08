@@ -9,6 +9,7 @@ import cv2
 from scipy import ndimage
 from PIL import Image, ImageStat
 from sklearn.neighbors import KNeighborsClassifier
+from skimage import feature
 
 
 def generate_horizontal_line(image, line_size_x):
@@ -54,15 +55,20 @@ def get_fragment_brightness(img):
     return stat.mean[0]
 
 
+def get_image_edges(image):
+    # TODO wyszukiwanie krawędzi
+    return 0
+
+
 def generate_parameters_for_knn(fragment, size):
     image_array = convert_image_to_array(fragment)
     moments = calculate_hu_moments(image_array)
     middle_pixel_color = get_middle_pixel_color(fragment, size)
     variation = get_variation_color(fragment)
     brightness = get_fragment_brightness(fragment)
-    edges = 0  # TODO wykrycie krawedzi przy uzyciu canny z cv
-    variation_of_vertical_line = get_variation_color(generate_vertical_line(fragment, 4))
-    variation_of_horizontal_line = get_variation_color(generate_horizontal_line(fragment, 4))
+    edges = get_image_edges(fragment)
+    variation_of_vertical_line = get_variation_color(generate_vertical_line(fragment, 5))
+    variation_of_horizontal_line = get_variation_color(generate_horizontal_line(fragment, 5))
 
     params = [
         {"id": 1, "name": "moments", "value": moments},
@@ -165,7 +171,7 @@ def generate_correct_answers_paths(start_from, end_on):
 
 
 def filter_image(image):
-    # TODO filtrowanie obrazu jak w fun
+    # TODO filtrowanie
     return image
 
 
@@ -251,42 +257,78 @@ def generate_new_min_values(old_min, vector):
 
 
 def generate_image_from_array(array):
-    w, h = len(array), len(array[0])
+    h, w = len(array), len(array[0])
     array_for_image = numpy.zeros((w, h, 3), dtype=numpy.uint8)
 
     for x in range(w):
         for y in range(h):
-            array_for_image[y][x] = [255, 255, 0] if array[x][y] == 1 else [0, 0, 0]
+            array_for_image[x][y] = [255, 255, 255] if array[y][x] == 1 else [0, 0, 0]
 
     img = Image.fromarray(array_for_image, 'RGB')
-    img.show()
+    # img.show()
+    return img
+
+
+def generate_misses_table(original_image, test_image, size_of_fragment):
+    true_true = 0
+    true_false = 0
+    false_true = 0
+    false_false = 0
+
+    original_table = convert_image_to_array(original_image)
+    test_table = convert_image_to_array(test_image)
+
+    for x in range(test_table.shape[0]):
+        for y in range(test_table.shape[1]):
+            if test_table[x][y] > 0 and original_table[x + size_of_fragment][y + size_of_fragment] > 0:
+                true_true+=1
+            if test_table[x][y] > 0 and original_table[x + size_of_fragment][y + size_of_fragment] == 0:
+                true_false+=1
+            if test_table[x][y] == 0 and original_table[x + size_of_fragment][y + size_of_fragment] > 0:
+                false_true+=1
+            if test_table[x][y] == 0 and original_table[x + size_of_fragment][y + size_of_fragment] == 0:
+                false_false+=1
+
+    print(true_true, true_false, false_true, false_false)
 
 
 def main():
     seed = 10
     amount_of_learning_point = 5000
-    size_of_fragment = 11
+    size_of_fragment = 21
     start_from = 1
-    end_on = 16
-    amount_of_neighbors = 6
+    end_on = 11
+    amount_of_neighbors = 10
+
+    start_test_from = 11
+    end_test_on = 15
 
     random.seed(seed)
 
     input_images_paths = generate_input_images_paths(start_from, end_on)
     correct_answers_images_paths = generate_correct_answers_paths(start_from, end_on)
 
+    test_input_images_paths = generate_input_images_paths(start_test_from, end_test_on)
+    test_correct_answers_images_paths = generate_correct_answers_paths(start_test_from, end_test_on)
+
     input_images = generate_images_array(input_images_paths)
     correct_answers_images = generate_images_array(correct_answers_images_paths)
     filtered_images = filter_images(input_images)
 
+
+    test_input_images = generate_images_array(test_input_images_paths)
+    test_correct_answers_images = generate_images_array(test_correct_answers_images_paths)
+    test_filtered_images = filter_images(test_input_images)
+
     tuples_array = generate_array_of_tuples_of_images(filtered_images, correct_answers_images)
+    test_tuples_array = generate_array_of_tuples_of_images(test_filtered_images, test_correct_answers_images)
 
     parameters_to_learn = []
     answers_to_learn = []
     max_values = []
     min_values = []
 
-    print(datetime.datetime.now())
+    generate_misses_table(test_correct_answers_images[0], test_correct_answers_images[0], 0)
 
     for i in range(amount_of_learning_point):
         chosen_pictures = choose_random_image(tuples_array)
@@ -315,15 +357,11 @@ def main():
 
     print(datetime.datetime.now())
 
-    # predict = knn.predict([normalized_parameters_to_learn[0]])
-    # print(predict)
-
-    predictions = predict_image(knn, get_image_to_predict(tuples_array[0][0], size_of_fragment),
-                                size_of_fragment, max_values, min_values)
-
-    print(datetime.datetime.now())
-
-    generate_image_from_array(predictions)
+    for test_tuple_image in test_tuples_array:
+        predictions = predict_image(knn, get_image_to_predict(test_tuple_image[0], size_of_fragment), size_of_fragment,
+                                    max_values, min_values)
+        generated_image = generate_image_from_array(predictions)
+        generate_misses_table(test_tuple_image[1], generated_image, size_of_fragment)
 
 
 main()
