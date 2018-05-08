@@ -160,7 +160,8 @@ def generate_images_array(images_paths):
 
 
 def generate_path_for_correct_answer_image(number):
-    return 'healthy_correct_mini/0' + str(number) + '_h.tif' if number < 10 else 'healthy_correct_mini/' + str(number) + '_h.tif'
+    return 'healthy_correct_mini/0' + str(number) + '_h.tif' if number < 10 else 'healthy_correct_mini/' \
+                                                                                 + str(number) + '_h.tif'
 
 
 def generate_correct_answers_paths(start_from, end_on):
@@ -281,13 +282,13 @@ def generate_misses_table(original_image, test_image, size_of_fragment):
     for x in range(test_table.shape[0]):
         for y in range(test_table.shape[1]):
             if test_table[x][y] > 0 and original_table[x + size_of_fragment][y + size_of_fragment] > 0:
-                true_true+=1
+                true_true += 1
             if test_table[x][y] > 0 and original_table[x + size_of_fragment][y + size_of_fragment] == 0:
-                true_false+=1
+                true_false += 1
             if test_table[x][y] == 0 and original_table[x + size_of_fragment][y + size_of_fragment] > 0:
-                false_true+=1
+                false_true += 1
             if test_table[x][y] == 0 and original_table[x + size_of_fragment][y + size_of_fragment] == 0:
-                false_false+=1
+                false_false += 1
 
     print(true_true, true_false, false_true, false_false)
     return [true_true, true_false, false_true, false_false]
@@ -312,7 +313,6 @@ def do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbor
     input_images = generate_images_array(input_images_paths)
     correct_answers_images = generate_images_array(correct_answers_images_paths)
     filtered_images = filter_images(input_images)
-
 
     test_input_images = generate_images_array(test_input_images_paths)
     test_correct_answers_images = generate_images_array(test_correct_answers_images_paths)
@@ -379,4 +379,6 @@ def main():
 
     print("Best!")
     print(best)
+
+
 main()
