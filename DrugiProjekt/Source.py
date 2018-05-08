@@ -290,15 +290,13 @@ def generate_misses_table(original_image, test_image, size_of_fragment):
                 false_false+=1
 
     print(true_true, true_false, false_true, false_false)
+    return [true_true, true_false, false_true, false_false]
 
 
-def main():
+def do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbors):
     seed = 10
-    amount_of_learning_point = 5000
-    size_of_fragment = 21
     start_from = 1
     end_on = 11
-    amount_of_neighbors = 10
 
     start_test_from = 11
     end_test_on = 15
@@ -328,8 +326,6 @@ def main():
     max_values = []
     min_values = []
 
-    generate_misses_table(test_correct_answers_images[0], test_correct_answers_images[0], 0)
-
     for i in range(amount_of_learning_point):
         chosen_pictures = choose_random_image(tuples_array)
 
@@ -357,11 +353,30 @@ def main():
 
     print(datetime.datetime.now())
 
+    global_misses_table = [0, 0, 0, 0]
+
     for test_tuple_image in test_tuples_array:
         predictions = predict_image(knn, get_image_to_predict(test_tuple_image[0], size_of_fragment), size_of_fragment,
                                     max_values, min_values)
         generated_image = generate_image_from_array(predictions)
-        generate_misses_table(test_tuple_image[1], generated_image, size_of_fragment)
+        misses_table = generate_misses_table(test_tuple_image[1], generated_image, size_of_fragment)
+        global_misses_table = global_misses_table + misses_table
+
+    accuracy = (global_misses_table[0] + global_misses_table[3]) / (global_misses_table[0] + global_misses_table[1] +
+                                                                    global_misses_table[2] + global_misses_table[3])
+    print(amount_of_learning_point, amount_of_neighbors, size_of_fragment, accuracy)
+    return [amount_of_learning_point, amount_of_neighbors, size_of_fragment, accuracy]
 
 
+def main():
+    best = [0, 0, 0, 0]
+    for amount_of_learning_point in range(1000, 20000, 1000):
+        for amount_of_neighbors in range(5, 100, 5):
+            for size_of_fragment in range(9, 21, 2):
+                result = do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbors)
+                if result[3] > best[3]:
+                    best = result
+
+    print("Best!")
+    print(best)
 main()
