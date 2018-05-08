@@ -360,7 +360,11 @@ def do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbor
                                     max_values, min_values)
         generated_image = generate_image_from_array(predictions)
         misses_table = generate_misses_table(test_tuple_image[1], generated_image, size_of_fragment)
-        global_misses_table = global_misses_table + misses_table
+
+        global_misses_table[0] += misses_table[0]
+        global_misses_table[1] += misses_table[1]
+        global_misses_table[2] += misses_table[2]
+        global_misses_table[3] += misses_table[3]
 
     accuracy = (global_misses_table[0] + global_misses_table[3]) / (global_misses_table[0] + global_misses_table[1] +
                                                                     global_misses_table[2] + global_misses_table[3])
