@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import datetime
 import random
 
 import matplotlib.pyplot as plt
@@ -130,7 +131,7 @@ def fun():
 
 
 def create_path_for_input_image(number):
-    return 'healthy/0' + str(number) + '_h.jpg' if number < 10 else 'healthy/' + str(number) + '_h.jpg'
+    return 'healthy_mini/0' + str(number) + '_h.jpg' if number < 10 else 'healthy_mini/' + str(number) + '_h.jpg'
 
 
 def generate_input_images_paths(start_from, end_on):
@@ -148,7 +149,7 @@ def generate_images_array(images_paths):
 
 
 def generate_path_for_correct_answer_image(number):
-    return 'healthy_correct/0' + str(number) + '_h.tif' if number < 10 else 'healthy_correct/' + str(number) + '_h.tif'
+    return 'healthy_correct_mini/0' + str(number) + '_h.tif' if number < 10 else 'healthy_correct_mini/' + str(number) + '_h.tif'
 
 
 def generate_correct_answers_paths(start_from, end_on):
@@ -244,10 +245,14 @@ def generate_new_min_values(old_min, vector):
         return new_min
 
 
+def generate_image_from_array(array):
+
+
+
 def main():
     seed = 10
-    amount_of_learning_point = 10
-    size_of_fragment = 9
+    amount_of_learning_point = 5000
+    size_of_fragment = 11
     start_from = 1
     end_on = 16
     amount_of_neighbors = 6
@@ -267,6 +272,8 @@ def main():
     answers_to_learn = []
     max_values = []
     min_values = []
+
+    print(datetime.datetime.now())
 
     for i in range(amount_of_learning_point):
         chosen_pictures = choose_random_image(tuples_array)
@@ -288,15 +295,22 @@ def main():
 
     normalized_parameters_to_learn = normalize_parameters_to_learn(parameters_to_learn, max_values, min_values)
 
+    print(datetime.datetime.now())
+
     knn = KNeighborsClassifier(n_neighbors=amount_of_neighbors)
     knn.fit(normalized_parameters_to_learn, answers_to_learn)
+
+    print(datetime.datetime.now())
 
     # predict = knn.predict([normalized_parameters_to_learn[0]])
     # print(predict)
 
     predictions = predict_image(knn, get_image_to_predict(tuples_array[0][0], size_of_fragment),
                                 size_of_fragment, max_values, min_values)
-    print(predictions)
+
+    print(datetime.datetime.now())
+
+   # print(predictions)
 
 
 main()
