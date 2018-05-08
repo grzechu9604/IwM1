@@ -7,7 +7,7 @@ from skimage import data, io
 import numpy
 import cv2
 from scipy import ndimage
-from PIL import Image
+from PIL import Image, ImageStat
 from sklearn.neighbors import KNeighborsClassifier
 
 
@@ -49,12 +49,17 @@ def get_variation_color(img):
     return numpy.var(convert_image_to_array(img))
 
 
+def get_fragment_brightness(img):
+    stat = ImageStat.Stat(img)
+    return stat.mean[0]
+
+
 def generate_parameters_for_knn(fragment, size):
     image_array = convert_image_to_array(fragment)
     moments = calculate_hu_moments(image_array)
     middle_pixel_color = get_middle_pixel_color(fragment, size)
     variation = get_variation_color(fragment)
-    brightness = 0  # TODO wyliczenie jasnosci obrazu
+    brightness = get_fragment_brightness(fragment)
     edges = 0  # TODO wykrycie krawedzi przy uzyciu canny z cv
     variation_of_vertical_line = get_variation_color(generate_vertical_line(fragment, 4))
     variation_of_horizontal_line = get_variation_color(generate_horizontal_line(fragment, 4))
@@ -319,8 +324,6 @@ def main():
     print(datetime.datetime.now())
 
     generate_image_from_array(predictions)
-
-   # print(predictions)
 
 
 main()
