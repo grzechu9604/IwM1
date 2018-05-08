@@ -176,7 +176,7 @@ def choose_random_pixel_coordinates(image, size_of_fragment):
            random.randint(size_of_fragment, image.height - size_of_fragment)
 
 
-def normalize_vector_to_learn(vector_to_learn, max_values, min_values):
+def normalize_vector_of_parameters(vector_to_learn, max_values, min_values):
     for i in range(len(vector_to_learn)):
         if max_values[i] > 0:
             vector_to_learn[i] = (vector_to_learn[i] - min_values[i]) / (max_values[i] - min_values[i])
@@ -186,7 +186,7 @@ def normalize_vector_to_learn(vector_to_learn, max_values, min_values):
 
 
 def normalize_parameters_to_learn(parameters_to_learn, max_values, min_values):
-    return [normalize_vector_to_learn(vector, max_values, min_values) for vector in parameters_to_learn]
+    return [normalize_vector_of_parameters(vector, max_values, min_values) for vector in parameters_to_learn]
 
 
 def generate_array_of_tuples_of_images(input_images, correct_answers_images):
@@ -209,9 +209,17 @@ def get_images_to_predict(images, size_of_fragment):
     return [get_image_to_predict(image, size_of_fragment) for image in images]
 
 
-def predict_image(knn, image, size_of_fragment):
-    # TODO predykcja całego obrazu
-    return image
+def predict_pixel(image, x, y, size_of_fragment, max_values, min_values, knn):
+    fragment = generate_fragment_using_middle_point(image, x, y, size_of_fragment)
+    parameters = generate_parameters_for_knn(fragment, size_of_fragment)
+    normalized_parameters = normalize_vector_of_parameters(parameters, max_values, min_values)
+
+    return knn.predict([normalized_parameters])
+
+
+def predict_image(knn, image, size_of_fragment, max_values, min_values):
+    return [[predict_pixel(image, x, y, size_of_fragment, max_values, min_values, knn)
+             for y in range(image.height)] for x in range(image.width)]
 
 
 def generate_new_max_values(old_max, vector):
@@ -262,12 +270,16 @@ def main():
 
     for i in range(amount_of_learning_point):
         chosen_pictures = choose_random_image(tuples_array)
+
         input_image = chosen_pictures[0]
         correct_answer_image = chosen_pictures[1]
+
         x, y = choose_random_pixel_coordinates(input_image, size_of_fragment)
         fragment = generate_fragment_using_middle_point(input_image, x, y, size_of_fragment)
+
         parameters = generate_parameters_for_knn(fragment, size_of_fragment)
         parameters_to_learn = parameters_to_learn + [parameters]
+
         correct_answer = get_correct_answer_for_pixel(correct_answer_image, x, y)
         answers_to_learn.append(correct_answer)
 
@@ -279,8 +291,12 @@ def main():
     knn = KNeighborsClassifier(n_neighbors=amount_of_neighbors)
     knn.fit(normalized_parameters_to_learn, answers_to_learn)
 
-    predict = knn.predict([normalized_parameters_to_learn[0]])
-    print(predict)
+    # predict = knn.predict([normalized_parameters_to_learn[0]])
+    # print(predict)
+
+    predictions = predict_image(knn, get_image_to_predict(tuples_array[0][0], size_of_fragment),
+                                size_of_fragment, max_values, min_values)
+    print(predictions)
 
 
 main()
