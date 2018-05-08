@@ -246,7 +246,15 @@ def generate_new_min_values(old_min, vector):
 
 
 def generate_image_from_array(array):
+    w, h = len(array), len(array[0])
+    array_for_image = numpy.zeros((w, h, 3), dtype=numpy.uint8)
 
+    for x in range(w):
+        for y in range(h):
+            array_for_image[y][x] = [255, 255, 0] if array[x][y] == 1 else [0, 0, 0]
+
+    img = Image.fromarray(array_for_image, 'RGB')
+    img.show()
 
 
 def main():
@@ -309,6 +317,8 @@ def main():
                                 size_of_fragment, max_values, min_values)
 
     print(datetime.datetime.now())
+
+    generate_image_from_array(predictions)
 
    # print(predictions)
 
