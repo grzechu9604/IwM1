@@ -116,7 +116,9 @@ def generate():
 
 def fun():
     plt.figure(figsize=(16, 16))
-    image = ['healthy/01_h.jpg']
+    image = ['healthy_mini/01_h.jpg']
+    image_correct = ['healthy_correct_mini/01_h.tif']
+    obrazy = []
     for i in image:
         plt.subplot(3, 1, 1)
         plt.axis('off')
@@ -124,9 +126,13 @@ def fun():
 
         plt.subplot(3, 1, 2)
         plt.axis('off')
-        grey = data.imread(i, as_grey=True)
-        dx = ndimage.sobel(grey, 1)
-        dy = ndimage.sobel(grey, 0)
+        inputImage = cv2.imread(i)
+        #dst = cv2.fastNlMeansDenoisingColored(inputImage, None, 10, 10, 7, 21)
+        #next = scipy.ndimage.filters.median_filter(dst, 10)
+        gray = cv2.cvtColor(inputImage, cv2.COLOR_BGR2GRAY)
+        gray = numpy.float64(gray)
+        dx = ndimage.sobel(gray, 0)
+        dy = ndimage.sobel(gray, 1)
         mag = numpy.hypot(dx, dy)
         mag *= 255.0 / numpy.max(mag)
         kernel = numpy.ones((5, 5), numpy.uint8)
@@ -136,8 +142,43 @@ def fun():
 
         plt.subplot(3, 1, 3)
         plt.axis('off')
-        io.imshow(data.imread(i, as_grey=True))
 
+
+        picture = data.imread(i, as_grey=False)
+        clone = picture.copy()
+        #picture2 = cv2.fastNlMeansDenoisingColored(inputImage, None, 10, 10, 7, 21)
+        lowerred = numpy.array([5, 5, 5])
+        upperred = numpy.array([255, 255, 255])
+        mask = cv2.inRange(picture, lowerred, upperred)
+        k = 12
+        gray = cv2.cvtColor(cv2.addWeighted(clone, k / 10, numpy.zeros(picture.shape, picture.dtype), 0, 100),
+                            cv2.COLOR_BGR2GRAY)
+        graythreshed2 = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 189 - k * 4,
+                                              2 + k / 5)
+        graythreshed2 = cv2.bitwise_and(graythreshed2, graythreshed2, mask=mask)
+        mask2 = cv2.bitwise_not(mask)
+        graythreshed2 = cv2.bitwise_or(graythreshed2, mask2)
+        bilateralfilted = cv2.bilateralFilter(graythreshed2, 5, 175, 175)
+        edge = cv2.Canny(bilateralfilted, 100, 1200)
+
+        _, contours, _ = cv2.findContours(edge, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contour_list = []
+        for contour in contours:
+            contour_list.append(contour)
+
+        clone2 = numpy.zeros((533, 800))
+
+        for j in range(len(contour_list)):
+            M = cv2.moments(contour_list[j])
+
+            cv2.drawContours(clone, [contour_list[j]], -1, (128, 128, 128), 3)
+            cv2.drawContours(clone2, [contour_list[j]], -1, (255, 255, 255), 3)
+
+        correct_image = generate_images_array(image_correct)
+        misses_table = generate_misses_table_for_array(correct_image, clone2, 0)
+        print(misses_table)
+
+        io.imshow(clone)
         plt.show()
 
 
@@ -222,6 +263,19 @@ def get_images_to_predict(images, size_of_fragment):
     return [get_image_to_predict(image, size_of_fragment) for image in images]
 
 
+def get_normalized_parameters_for_pixel(image, x, y, size_of_fragment, max_values, min_values):
+    fragment = generate_fragment_using_middle_point(image, x, y, size_of_fragment)
+    parameters = generate_parameters_for_knn(fragment, size_of_fragment)
+    normalized_parameters = normalize_vector_of_parameters(parameters, max_values, min_values)
+
+    return normalized_parameters
+
+
+def get_normalized_parameters_for_image(image, size_of_fragment, max_values, min_values):
+    return [[get_normalized_parameters_for_pixel(image, x, y, size_of_fragment, max_values, min_values)
+             for y in range(image.height)] for x in range(image.width)]
+
+
 def predict_pixel(image, x, y, size_of_fragment, max_values, min_values, knn):
     fragment = generate_fragment_using_middle_point(image, x, y, size_of_fragment)
     parameters = generate_parameters_for_knn(fragment, size_of_fragment)
@@ -267,6 +321,7 @@ def generate_image_from_array(array):
 
     img = Image.fromarray(array_for_image, 'RGB')
     img.show()
+    img.save("Wynik.jpg")
     return img
 
 
@@ -277,10 +332,34 @@ def generate_misses_table(original_image, test_image, size_of_fragment):
     false_false = 0
 
     original_table = convert_image_to_array(original_image)
-    test_table = convert_image_to_array(test_image)
+    test_table = test_image
 
-    for x in range(test_table.shape[0]):
-        for y in range(test_table.shape[1]):
+    for x in range(len(test_table[0])):
+        for y in range(len(test_table)):
+            if test_table[x][y] > 0 and original_table[x + size_of_fragment][y + size_of_fragment] > 0:
+                true_true += 1
+            if test_table[x][y] > 0 and original_table[x + size_of_fragment][y + size_of_fragment] == 0:
+                true_false += 1
+            if test_table[x][y] == 0 and original_table[x + size_of_fragment][y + size_of_fragment] > 0:
+                false_true += 1
+            if test_table[x][y] == 0 and original_table[x + size_of_fragment][y + size_of_fragment] == 0:
+                false_false += 1
+
+    print(true_true, true_false, false_true, false_false)
+    return [true_true, true_false, false_true, false_false]
+
+
+def generate_misses_table_for_array(original_image, test, size_of_fragment):
+    true_true = 0
+    true_false = 0
+    false_true = 0
+    false_false = 0
+
+    original_table = convert_image_to_array(original_image)
+    test_table = test
+
+    for x in range(len(test_table[0])):
+        for y in range(len(test_table)):
             if test_table[x][y] > 0 and original_table[x + size_of_fragment][y + size_of_fragment] > 0:
                 true_true += 1
             if test_table[x][y] > 0 and original_table[x + size_of_fragment][y + size_of_fragment] == 0:
@@ -301,6 +380,8 @@ def do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbor
 
     start_test_from = 11
     end_test_on = 15
+
+    max_amount_of_learning_point = 50000
 
     random.seed(seed)
 
@@ -326,7 +407,7 @@ def do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbor
     max_values = []
     min_values = []
 
-    for i in range(amount_of_learning_point):
+    for i in range(max_amount_of_learning_point):
         chosen_pictures = choose_random_image(tuples_array)
 
         input_image = chosen_pictures[0]
@@ -346,26 +427,30 @@ def do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbor
 
     normalized_parameters_to_learn = normalize_parameters_to_learn(parameters_to_learn, max_values, min_values)
 
-    knn = KNeighborsClassifier(n_neighbors=amount_of_neighbors)
-    knn.fit(normalized_parameters_to_learn, answers_to_learn)
-
     global_misses_table = [0, 0, 0, 0]
 
     for test_tuple_image in [test_tuples_array[0]]:
-        predictions = predict_image(knn, get_image_to_predict(test_tuple_image[0], size_of_fragment), size_of_fragment,
-                                    max_values, min_values)
-        generated_image = generate_image_from_array(predictions)
-        misses_table = generate_misses_table(test_tuple_image[1], generated_image, size_of_fragment)
+        normalized_parameters = get_normalized_parameters_for_image(test_tuple_image[0], size_of_fragment,
+                                                                    max_values, min_values)
+        for amount_of_neighbors in range(5, 100, 5):
+                for amount_of_learning_point in range(30000, 50000, 1000):
+                        knn = KNeighborsClassifier(n_neighbors=amount_of_neighbors)
+                        knn.fit(normalized_parameters_to_learn[:amount_of_learning_point], answers_to_learn[:amount_of_learning_point])
 
-        global_misses_table[0] += misses_table[0]
-        global_misses_table[1] += misses_table[1]
-        global_misses_table[2] += misses_table[2]
-        global_misses_table[3] += misses_table[3]
+                        predictions = []
 
-    accuracy = (global_misses_table[0] + global_misses_table[3]) / (global_misses_table[0] + global_misses_table[1] +
-                                                                    global_misses_table[2] + global_misses_table[3])
-    print(amount_of_learning_point, amount_of_neighbors, size_of_fragment, global_misses_table[0])
-    return [amount_of_learning_point, amount_of_neighbors, size_of_fragment, global_misses_table[0]]
+                        predicted_array = [knn.predict(parameters) for parameters in normalized_parameters]
+
+                        generate_image_from_array(predicted_array)
+
+                        misses_table = generate_misses_table(test_tuple_image[1], predicted_array, size_of_fragment)
+
+                        global_misses_table[0] += misses_table[0]
+                        global_misses_table[1] += misses_table[1]
+                        global_misses_table[2] += misses_table[2]
+                        global_misses_table[3] += misses_table[3]
+
+                        print(amount_of_learning_point, amount_of_neighbors, size_of_fragment, global_misses_table[0])
 
 
 def main2():
@@ -384,4 +469,5 @@ def main():
     do_experiment(16000, 13, 5)
 
 
-main()
+fun()
+#main()
