@@ -266,7 +266,7 @@ def generate_image_from_array(array):
             array_for_image[x][y] = [255, 255, 255] if array[y][x] == 1 else [0, 0, 0]
 
     img = Image.fromarray(array_for_image, 'RGB')
-    # img.show()
+    img.show()
     return img
 
 
@@ -346,16 +346,12 @@ def do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbor
 
     normalized_parameters_to_learn = normalize_parameters_to_learn(parameters_to_learn, max_values, min_values)
 
-    print(datetime.datetime.now())
-
     knn = KNeighborsClassifier(n_neighbors=amount_of_neighbors)
     knn.fit(normalized_parameters_to_learn, answers_to_learn)
 
-    print(datetime.datetime.now())
-
     global_misses_table = [0, 0, 0, 0]
 
-    for test_tuple_image in test_tuples_array:
+    for test_tuple_image in [test_tuples_array[0]]:
         predictions = predict_image(knn, get_image_to_predict(test_tuple_image[0], size_of_fragment), size_of_fragment,
                                     max_values, min_values)
         generated_image = generate_image_from_array(predictions)
@@ -368,13 +364,13 @@ def do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbor
 
     accuracy = (global_misses_table[0] + global_misses_table[3]) / (global_misses_table[0] + global_misses_table[1] +
                                                                     global_misses_table[2] + global_misses_table[3])
-    print(amount_of_learning_point, amount_of_neighbors, size_of_fragment, accuracy)
-    return [amount_of_learning_point, amount_of_neighbors, size_of_fragment, accuracy]
+    print(amount_of_learning_point, amount_of_neighbors, size_of_fragment, global_misses_table[0])
+    return [amount_of_learning_point, amount_of_neighbors, size_of_fragment, global_misses_table[0]]
 
 
-def main():
+def main2():
     best = [0, 0, 0, 0]
-    for amount_of_learning_point in range(1000, 20000, 1000):
+    for amount_of_learning_point in range(19000, 20000, 1000):
         for amount_of_neighbors in range(5, 100, 5):
             for size_of_fragment in range(9, 21, 2):
                 result = do_experiment(amount_of_learning_point, size_of_fragment, amount_of_neighbors)
@@ -383,6 +379,9 @@ def main():
 
     print("Best!")
     print(best)
+
+def main():
+    do_experiment(16000, 13, 5)
 
 
 main()
