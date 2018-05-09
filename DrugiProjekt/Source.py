@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import datetime
 import random
+import scipy
 
 import matplotlib.pyplot as plt
 from skimage import data, io
@@ -11,10 +12,8 @@ from PIL import Image, ImageStat
 from sklearn.neighbors import KNeighborsClassifier
 from skimage import feature
 
-
 def generate_horizontal_line(image, line_size_x):
     return generate_line(image, 0, image.height / 2 - line_size_x / 2, image.width, image.height / 2 + line_size_x / 2)
-
 
 def generate_vertical_line(image, line_size_y):
     return generate_line(image, image.width / 2 - line_size_y / 2, 0, image.width / 2 + line_size_y / 2, image.height)
@@ -116,7 +115,7 @@ def generate():
 
 def fun():
     plt.figure(figsize=(16, 16))
-    image = ['healthy_mini/01_h.jpg']
+    image = ['healthy/01_h.jpg']
     image_correct = ['healthy_correct_mini/01_h.tif']
     obrazy = []
     for i in image:
@@ -127,9 +126,9 @@ def fun():
         plt.subplot(3, 1, 2)
         plt.axis('off')
         inputImage = cv2.imread(i)
-        #dst = cv2.fastNlMeansDenoisingColored(inputImage, None, 10, 10, 7, 21)
-        #next = scipy.ndimage.filters.median_filter(dst, 10)
-        gray = cv2.cvtColor(inputImage, cv2.COLOR_BGR2GRAY)
+        dst = cv2.fastNlMeansDenoisingColored(inputImage, None, 10, 10, 7, 21)
+        next = scipy.ndimage.filters.median_filter(dst, 10)
+        gray = cv2.cvtColor(next, cv2.COLOR_BGR2GRAY)
         gray = numpy.float64(gray)
         dx = ndimage.sobel(gray, 0)
         dy = ndimage.sobel(gray, 1)
@@ -138,20 +137,26 @@ def fun():
         kernel = numpy.ones((5, 5), numpy.uint8)
         erosion = cv2.erode(mag, kernel, iterations=1)
         dilation = cv2.dilate(erosion, kernel, iterations=1)
+        w = inputImage.shape[1]
+        h = inputImage.shape[0]
+        for k in range(0, h):
+            for t in range(0, w):
+                if(dilation[k,t]>5):
+                    dilation[k,t] = 255
+                else:
+                    dilation[k,t] = 0
         io.imshow(dilation)
 
         plt.subplot(3, 1, 3)
         plt.axis('off')
 
-
-        picture = data.imread(i, as_grey=False)
-        clone = picture.copy()
-        #picture2 = cv2.fastNlMeansDenoisingColored(inputImage, None, 10, 10, 7, 21)
+        picture2 = cv2.fastNlMeansDenoisingColored(inputImage, None, 10, 10, 7, 21)
+        clone = inputImage.copy()
         lowerred = numpy.array([5, 5, 5])
         upperred = numpy.array([255, 255, 255])
-        mask = cv2.inRange(picture, lowerred, upperred)
+        mask = cv2.inRange(picture2, lowerred, upperred)
         k = 12
-        gray = cv2.cvtColor(cv2.addWeighted(clone, k / 10, numpy.zeros(picture.shape, picture.dtype), 0, 100),
+        gray = cv2.cvtColor(cv2.addWeighted(clone, k / 10, numpy.zeros(picture2.shape, picture2.dtype), 0, 100),
                             cv2.COLOR_BGR2GRAY)
         graythreshed2 = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 189 - k * 4,
                                               2 + k / 5)
@@ -166,19 +171,12 @@ def fun():
         for contour in contours:
             contour_list.append(contour)
 
-        clone2 = numpy.zeros((533, 800))
+        clone2 = numpy.zeros((h, w))
 
         for j in range(len(contour_list)):
             M = cv2.moments(contour_list[j])
-
-            cv2.drawContours(clone, [contour_list[j]], -1, (128, 128, 128), 3)
             cv2.drawContours(clone2, [contour_list[j]], -1, (255, 255, 255), 3)
-
-        correct_image = generate_images_array(image_correct)
-        misses_table = generate_misses_table_for_array(correct_image, clone2, 0)
-        print(misses_table)
-
-        io.imshow(clone)
+        io.imshow(clone2)
         plt.show()
 
 
